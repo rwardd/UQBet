@@ -1,1 +1,1 @@
-# COMS4507_Project
+# UQBet - a COMS4507 project
