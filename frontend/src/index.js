@@ -1,6 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Dapp } from "./components/Dapp";
+import UQBet from "./components/UQBet";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 // We import bootstrap here, but you can remove if you want
 import "bootstrap/dist/css/bootstrap.css";
@@ -10,7 +12,12 @@ import "bootstrap/dist/css/bootstrap.css";
 
 ReactDOM.render(
   <React.StrictMode>
-    <Dapp />
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<Dapp />} />
+        <Route path='/UQBet' element={<UQBet />} />
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById("root")
 );

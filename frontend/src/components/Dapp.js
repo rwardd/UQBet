@@ -1,5 +1,8 @@
 import React from "react";
 
+// General front end imports
+import { Link } from "react-router-dom";
+
 // We'll use ethers to interact with the Ethereum network and our contract
 import { ethers } from "ethers";
 
@@ -75,8 +78,8 @@ export class Dapp extends React.Component {
     // clicks a button. This callback just calls the _connectWallet method.
     if (!this.state.selectedAddress) {
       return (
-        <ConnectWallet 
-          connectWallet={() => this._connectWallet()} 
+        <ConnectWallet
+          connectWallet={() => this._connectWallet()}
           networkError={this.state.networkError}
           dismiss={() => this._dismissNetworkError()}
         />
@@ -91,9 +94,9 @@ export class Dapp extends React.Component {
 
     // If everything is loaded, we render the application.
     return (
-      <div className="container p-4">
-        <div className="row">
-          <div className="col-12">
+      <div className='container p-4'>
+        <div className='row'>
+          <div className='col-12'>
             <h1>
               {this.state.tokenData.name} ({this.state.tokenData.symbol})
             </h1>
@@ -106,24 +109,22 @@ export class Dapp extends React.Component {
             </p>
           </div>
         </div>
-
         <hr />
-
-        <div className="row">
-          <div className="col-12">
+        <div className='row'>
+          <div className='col-12'>
             {/* 
-              Sending a transaction isn't an immediate action. You have to wait
-              for it to be mined.
-              If we are waiting for one, we show a message here.
-            */}
+			  Sending a transaction isn't an immediate action. You have to wait
+			  for it to be mined.
+			  If we are waiting for one, we show a message here.
+			*/}
             {this.state.txBeingSent && (
               <WaitingForTransactionMessage txHash={this.state.txBeingSent} />
             )}
 
             {/* 
-              Sending a transaction can fail in multiple ways. 
-              If that happened, we show a message here.
-            */}
+			  Sending a transaction can fail in multiple ways. 
+			  If that happened, we show a message here.
+			*/}
             {this.state.transactionError && (
               <TransactionErrorMessage
                 message={this._getRpcErrorMessage(this.state.transactionError)}
@@ -132,22 +133,21 @@ export class Dapp extends React.Component {
             )}
           </div>
         </div>
-
-        <div className="row">
-          <div className="col-12">
+        <div className='row'>
+          <div className='col-12'>
             {/*
-              If the user has no tokens, we don't show the Transfer form
-            */}
+			  If the user has no tokens, we don't show the Transfer form
+			*/}
             {this.state.balance.eq(0) && (
               <NoTokensMessage selectedAddress={this.state.selectedAddress} />
             )}
 
             {/*
-              This component displays a form that the user can use to send a 
-              transaction and transfer some tokens.
-              The component doesn't have logic, it just calls the transferTokens
-              callback.
-            */}
+			  This component displays a form that the user can use to send a 
+			  transaction and transfer some tokens.
+			  The component doesn't have logic, it just calls the transferTokens
+			  callback.
+			*/}
             {this.state.balance.gt(0) && (
               <Transfer
                 transferTokens={(to, amount) =>
@@ -157,6 +157,12 @@ export class Dapp extends React.Component {
               />
             )}
           </div>
+        </div>
+        <div className='button'>
+          <h2>
+            {" "}
+            <Link to='/UQBet'>UQBet</Link>
+          </h2>
         </div>
       </div>
     );
@@ -174,7 +180,10 @@ export class Dapp extends React.Component {
 
     // To connect to the user's wallet, we have to run this method.
     // It returns a promise that will resolve to the user's address.
-    const [selectedAddress] = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+    const [selectedAddress] = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
 
     // Once we have the address, we can initialize the application.
 
@@ -191,14 +200,14 @@ export class Dapp extends React.Component {
       // `accountsChanged` event can be triggered with an undefined newAddress.
       // This happens when the user removes the Dapp from the "Connected
       // list of sites allowed access to your addresses" (Metamask > Settings > Connections)
-      // To avoid errors, we reset the dapp state 
+      // To avoid errors, we reset the dapp state
       if (newAddress === undefined) {
         return this._resetState();
       }
-      
+
       this._initialize(newAddress);
     });
-    
+
     // We reset the dapp state if the network is changed
     window.ethereum.on("chainChanged", ([networkId]) => {
       this._stopPollingData();
@@ -361,8 +370,8 @@ export class Dapp extends React.Component {
       return true;
     }
 
-    this.setState({ 
-      networkError: 'Please connect Metamask to Localhost:8545'
+    this.setState({
+      networkError: "Please connect Metamask to Localhost:8545",
     });
 
     return false;
