@@ -78,4 +78,5 @@ Your environment will have everything you need to build a Dapp powered by Hardha
   console, try resetting your Metamask account. This will reset the account's
   transaction history and also the nonce. Open Metamask, click on your account
   followed by `Settings > Advanced > Reset Account`.
+- Use node version 16.x.x. Problems occur when using version 17.x.x
 
