@@ -1,4 +1,4 @@
-import React, { FC, useContext, useState } from "react";
+import React, { FC, useContext } from "react";
 import { GlobalState } from "../globalState";
 import { COLORS } from "../theme";
 import { ConnectWallet } from "./ConnectWallet";
@@ -12,6 +12,7 @@ import { ethers } from "ethers";
 // using them with ethers
 import TokenArtifact from "../contracts/Token.json";
 import contractAddress from "../contracts/contract-address.json";
+import BetSlip from "./BetSlip";
 
 // This is the Hardhat Network id, you might change it in the hardhat.config.js.
 // If you are using MetaMask, be sure to change the Network id to 1337.
@@ -185,7 +186,12 @@ const UQBet: FC = () => {
     );
   }
 
-  return <Header />;
+  return (
+    <>
+      <Header />
+      <BetSlip />
+    </>
+  );
 };
 
 export default UQBet;

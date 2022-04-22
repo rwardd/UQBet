@@ -1,10 +1,10 @@
-import { render } from "@testing-library/react";
-import React, { FC, HTMLAttributeAnchorTarget } from "react";
+import React, { FC } from "react";
+import { COLORS, BOX } from "../theme";
 
 const BetSlip: FC = () => {
   return (
-    <div>
-      <h2>BetSlip</h2>
+    <div style={betSlipStyling}>
+      <h2>BetSlip (this does nothing atm)</h2>
       <h3>Team A</h3>
       <h3>Total Amount: x ETH</h3>
       <h5>Enter an amount to bid:</h5>
@@ -18,6 +18,15 @@ const BetSlip: FC = () => {
       <input type='submit' />
     </div>
   );
+};
+
+const betSlipStyling: React.CSSProperties = {
+  color: COLORS.purple,
+  backgroundColor: "white",
+  borderRadius: BOX.borderRadius,
+  padding: BOX.padding,
+  width: "75%",
+  margin: "auto",
 };
 
 export default BetSlip;

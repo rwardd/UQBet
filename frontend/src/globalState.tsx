@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 
 // This is our global state
 
@@ -6,10 +6,10 @@ export const GlobalState = React.createContext<Partial<IGlobalState>>({});
 
 export interface IGlobalState {
   // The info of the token (i.e. It's Name and symbol)
-  tokenData: any;
+  tokenData: ITokenData | undefined;
   setTokenData: any;
   // The user's address
-  selectedAddress: any;
+  selectedAddress: string | undefined;
   setSelectedAddress: any;
   // The user's balance
   balance: any;
@@ -30,18 +30,23 @@ export interface IGlobalState {
 interface GlobalStateProviderProps {
   children: ReactNode;
 }
+interface ITokenData {
+  name: string;
+  symbol: string;
+}
 
 export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = (
   props
 ) => {
   const { children } = props;
 
-  const [tokenData, setTokenData] = React.useState(undefined);
-  const [selectedAddress, setSelectedAddress] = React.useState(undefined);
-  const [balance, setBalance] = React.useState(undefined);
-  const [txBeingSent, setTxBeingSet] = React.useState(undefined);
-  const [transactionError, setTransactionError] = React.useState(undefined);
-  const [networkError, setNetworkError] = React.useState(undefined);
+  const [tokenData, setTokenData] = useState(undefined);
+  const [selectedAddress, setSelectedAddress] = useState(undefined);
+  const [balance, setBalance] = useState(undefined);
+  const [txBeingSent, setTxBeingSet] = useState(undefined);
+  const [transactionError, setTransactionError] = useState(undefined);
+  const [networkError, setNetworkError] = useState(undefined);
+
   function resetState() {
     setTokenData(undefined);
     setSelectedAddress(undefined);

@@ -5,8 +5,6 @@ import { Loading } from "./Loading";
 
 const Header: FC = () => {
   const { tokenData, balance, selectedAddress } = useContext(GlobalState);
-  console.log(useContext(GlobalState));
-
   const logo = (
     <h1
       style={{
@@ -17,12 +15,15 @@ const Header: FC = () => {
     </h1>
   );
 
-  const balanceDisplay = () => {
+  const accountDisplay = () => {
     if (!tokenData || !balance) {
       return <Loading />;
     } else {
       return (
-        <h3 style={{ marginRight: "75px" }}>Balance: {`${balance}`} tokens</h3>
+        <div style={accountDisplayStyling}>
+          <h3>Balance: {`${balance} ${tokenData.symbol}`}</h3>
+          <h5>Account: {`${selectedAddress}`} </h5>
+        </div>
       );
     }
   };
@@ -30,7 +31,7 @@ const Header: FC = () => {
   return (
     <div style={headerStyling}>
       {logo}
-      {balanceDisplay()}
+      {accountDisplay()}
     </div>
   );
 };
@@ -42,6 +43,15 @@ const headerStyling: React.CSSProperties = {
   alignItems: "center",
   color: COLORS.white,
   padding: "15px",
+  marginBottom: "20px",
+};
+
+const accountDisplayStyling: React.CSSProperties = {
+  marginRight: "15px",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-end",
+  alignSelf: "flex-end",
 };
 
 export default Header;
