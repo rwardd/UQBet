@@ -5,18 +5,26 @@ import React, { ReactNode } from "react";
 export const GlobalState = React.createContext<Partial<IGlobalState>>({});
 
 export interface IGlobalState {
+  // The info of the token (i.e. It's Name and symbol)
   tokenData: any;
   setTokenData: any;
+  // The user's address
   selectedAddress: any;
   setSelectedAddress: any;
+  // The user's balance
   balance: any;
   setBalance: any;
+  // The ID about transactions being sent
   txBeingSent: any;
   setTxBeingSet: any;
+  // Any possible transaction error
   transactionError: any;
   setTransactionError: any;
+  // Any network error
   networkError: any;
   setNetworkError: any;
+  // Function to reset state
+  resetState: () => void;
 }
 
 interface GlobalStateProviderProps {
@@ -34,6 +42,14 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = (
   const [txBeingSent, setTxBeingSet] = React.useState(undefined);
   const [transactionError, setTransactionError] = React.useState(undefined);
   const [networkError, setNetworkError] = React.useState(undefined);
+  function resetState() {
+    setTokenData(undefined);
+    setSelectedAddress(undefined);
+    setBalance(undefined);
+    setTxBeingSet(undefined);
+    setTransactionError(undefined);
+    setNetworkError(undefined);
+  }
 
   const initialState: IGlobalState = {
     tokenData,
@@ -48,6 +64,7 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = (
     setTransactionError,
     networkError,
     setNetworkError,
+    resetState,
   };
 
   return (

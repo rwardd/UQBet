@@ -1,24 +1,36 @@
-import React, { useContext, FC, ReactNode } from "react";
-import { COLORS, FONT_SIZE } from "../theme";
+import React, { FC, useContext } from "react";
 import { GlobalState } from "../globalState";
-import { ConnectWallet } from "./ConnectWallet";
-import { globalAgent } from "http";
-import { HARDHAT_NETWORK_ID } from "./UQBet";
+import { COLORS, FONT_SIZE } from "../theme";
+import { Loading } from "./Loading";
 
 const Header: FC = () => {
-  const globalState = useContext(GlobalState);
+  const { tokenData, balance, selectedAddress } = useContext(GlobalState);
+  console.log(useContext(GlobalState));
+
+  const logo = (
+    <h1
+      style={{
+        fontSize: FONT_SIZE.title,
+      }}
+    >
+      UQBet
+    </h1>
+  );
+
+  const balanceDisplay = () => {
+    if (!tokenData || !balance) {
+      return <Loading />;
+    } else {
+      return (
+        <h3 style={{ marginRight: "75px" }}>Balance: {`${balance}`} tokens</h3>
+      );
+    }
+  };
 
   return (
     <div style={headerStyling}>
-      <h1
-        style={{
-          color: COLORS.white,
-          fontSize: FONT_SIZE.title,
-          padding: "15px",
-        }}
-      >
-        UQBet
-      </h1>
+      {logo}
+      {balanceDisplay()}
     </div>
   );
 };
@@ -26,6 +38,10 @@ const Header: FC = () => {
 const headerStyling: React.CSSProperties = {
   display: "flex",
   flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
+  color: COLORS.white,
+  padding: "15px",
 };
 
 export default Header;
