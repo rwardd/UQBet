@@ -1,0 +1,35 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/BettingPool.sol": {
+      "content": "pragma solidity ^0.8.0;\n\n\ncontract BettingPool {\n    uint256 poolA;\n    uint256 poolB;\n\n    address owner;\n\n    mapping(address => uint256) public poolBalancesA;\n    mapping(address => uint256) public poolBalancesB;\n\n    constructor () {\n        owner = msg.sender;\n    }\n\n    function depositToA(uint256 amount) public payable {\n        require(amount == msg.value, \"Amount deposited does not equal message value\");\n        poolBalancesA[msg.sender] += amount;\n        poolA += amount;\n    }\n\n    function amountInPoolA(address a) public view returns (uint256) {\n        return poolBalancesA[a];\n    }\n\n    function depositToB(uint256 amount) public payable {\n        require(amount == msg.value, \"Amount deposited does not equal message value\");\n        poolBalancesB[msg.sender] += amount;\n        poolB += amount;\n    }\n\n    function getPoolA() public view returns (uint256) {\n        return poolA;\n    }\n\n    function getPoolB() public view returns (uint256) {\n        return poolB;\n    }\n\n    function getBalance() public view returns(uint256) {\n        return address(this).balance;\n    }\n\n    //SHOULD NOT BE IMPLEMENTED -> JUST TO PREVENT USING A FAUCET AND TO STOP ETH BEING LOCKED IN CONTRACT\n    //WORKAROUND -> USE CUSTOM ERC20 TOKEN\n    function withdrawToOwner(uint256 amount) public {\n        require(msg.sender == owner, \"Only owner can call this function\");\n        require((poolA + poolB) <= address(this).balance, \"Something has gone terribly wrong\");\n        require(amount < address(this).balance - 1, \"Need ether for gas calls\");\n        (bool success, ) = owner.call{value: amount}(\"\");\n        require(success, \"transer call gone wrong\");\n        poolA = 0;\n        poolB = 0;\n\n    }\n\n\n}"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}

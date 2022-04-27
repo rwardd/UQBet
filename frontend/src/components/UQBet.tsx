@@ -3,6 +3,7 @@ import { GlobalState } from "../globalState";
 import { COLORS } from "../theme";
 import { ConnectWallet } from "./ConnectWallet";
 import Header from "./Header";
+import Web3 from 'web3';
 import { NoWalletDetected } from "./NoWalletDetected";
 
 // We'll use ethers to interact with the Ethereum network and our contract
@@ -13,6 +14,7 @@ import { ethers } from "ethers";
 import TokenArtifact from "../contracts/Token.json";
 import contractAddress from "../contracts/contract-address.json";
 import BetSlip from "./BetSlip";
+
 
 // This is the Hardhat Network id, you might change it in the hardhat.config.js.
 // If you are using MetaMask, be sure to change the Network id to 1337.
@@ -33,7 +35,7 @@ const UQBet: FC = () => {
 
   let _token: ethers.Contract;
   let _pollDataInterval: any;
-
+  
   /**
    * Function defintions
    */
@@ -62,13 +64,7 @@ const UQBet: FC = () => {
     );
   }
 
-  async function _getTokenData() {
-    const name = await _token.name();
-    const symbol = await _token.symbol();
-
-    setTokenData({ name, symbol });
-  }
-
+  
   async function _updateBalance(userAddress: string) {
     const balance = await _token.balanceOf(userAddress);
     setBalance(balance);
@@ -105,7 +101,7 @@ const UQBet: FC = () => {
     // Fetching the token data and the user's balance are specific to this
     // sample project, but you can reuse the same initialization pattern.
     _initializeEthers();
-    _getTokenData();
+
     _startPollingData(userAddress);
   }
 

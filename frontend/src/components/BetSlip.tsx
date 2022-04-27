@@ -1,5 +1,12 @@
+import Web3 from 'web3';
 import React, { FC } from "react";
 import { COLORS, BOX } from "../theme";
+
+const web3 = new Web3()
+
+function depositA(amount){
+  
+}
 
 const BetSlip: FC = () => {
   return (
