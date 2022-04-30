@@ -22,7 +22,8 @@ module.exports = {
     ropsten: {
       url: "https://eth-ropsten.alchemyapi.io/v2/kK9-U9jQJVpCLDjzMceUganJau8Se4O2",
       accounts: [`0x${ROPSTEN_PRIVATE_KEY}`],
-      gasPrice: 4500000000
+      gasPrice: 4500000000,
+      chainId: 3
     },
   },
   etherscan: {

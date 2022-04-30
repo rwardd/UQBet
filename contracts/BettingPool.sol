@@ -55,5 +55,9 @@ contract BettingPool {
 
     }
 
+    receive() external payable {
+        
+    }
+
 
 }

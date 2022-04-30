@@ -3,7 +3,6 @@ import { GlobalState } from "../globalState";
 import { COLORS } from "../theme";
 import { ConnectWallet } from "./ConnectWallet";
 import Header from "./Header";
-import Web3 from 'web3';
 import { NoWalletDetected } from "./NoWalletDetected";
 
 // We'll use ethers to interact with the Ethereum network and our contract
@@ -11,7 +10,7 @@ import { ethers } from "ethers";
 
 // We import the contract's artifacts and address here, as we are going to be
 // using them with ethers
-import TokenArtifact from "../contracts/Token.json";
+import TokenArtifact from "../contracts/BettingPool.json";
 import contractAddress from "../contracts/contract-address.json";
 import BetSlip from "./BetSlip";
 
@@ -20,7 +19,7 @@ import BetSlip from "./BetSlip";
 // If you are using MetaMask, be sure to change the Network id to 1337.
 // Here's a list of network ids https://docs.metamask.io/guide/ethereum-provider.html#properties
 // to use when deploying to other networks.
-export const HARDHAT_NETWORK_ID = "1337";
+export const HARDHAT_NETWORK_ID = "3";
 
 const UQBet: FC = () => {
   const {
@@ -30,6 +29,7 @@ const UQBet: FC = () => {
     setSelectedAddress,
     setTokenData,
     setBalance,
+    setContract,
     resetState,
   } = useContext(GlobalState);
 
@@ -46,7 +46,7 @@ const UQBet: FC = () => {
       return true;
     }
 
-    setNetworkError("Please connect Metamask to Localhost:8545");
+    setNetworkError("Please connect Metamask to Ropsten Test Network");
 
     return false;
   }
@@ -62,13 +62,11 @@ const UQBet: FC = () => {
       TokenArtifact.abi,
       _provider.getSigner(0)
     );
+    setContract(_token);
   }
 
   
-  async function _updateBalance(userAddress: string) {
-    const balance = await _token.balanceOf(userAddress);
-    setBalance(balance);
-  }
+
 
   // The next two methods are needed to start and stop polling data. While
   // the data being polled here is specific to this example, you can use this
@@ -78,10 +76,10 @@ const UQBet: FC = () => {
   // don't need to poll it. If that's the case, you can just fetch it when you
   // initialize the app, as we do with the token data.
   function _startPollingData(userAddress: string) {
-    _pollDataInterval = setInterval(() => _updateBalance(userAddress), 1000);
+    _pollDataInterval = setInterval(() => 1000);
 
     // We run it once immediately so we don't have to wait for it
-    _updateBalance(userAddress);
+
   }
 
   function _stopPollingData() {
@@ -101,8 +99,9 @@ const UQBet: FC = () => {
     // Fetching the token data and the user's balance are specific to this
     // sample project, but you can reuse the same initialization pattern.
     _initializeEthers();
-
+    console.log("Here")
     _startPollingData(userAddress);
+    console.log("Here")
   }
 
   // This method just clears part of the state.
@@ -127,6 +126,7 @@ const UQBet: FC = () => {
     }
 
     _initialize(accountAddy);
+    console.log("Here")
 
     // We reinitialize it whenever the user changes their account.
     window.ethereum.on("accountsChanged", (newAddress: any) => {
@@ -142,6 +142,7 @@ const UQBet: FC = () => {
       }
 
       _initialize(newAddress);
+
     });
 
     // We reset the dapp state if the network is changed

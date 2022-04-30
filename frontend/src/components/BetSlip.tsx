@@ -1,14 +1,22 @@
-import Web3 from 'web3';
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 import { COLORS, BOX } from "../theme";
+import { GlobalState } from "../globalState";
+import { ethers } from "ethers";
 
-const web3 = new Web3()
-
-function depositA(amount){
-  
-}
 
 const BetSlip: FC = () => {
+  const {
+    bettingContract,
+  } = useContext(GlobalState);
+
+  function testLog() {
+    console.log("Hello")
+    console.log(bettingContract);
+    if (bettingContract !== undefined) {
+      bettingContract.depositToA(ethers.utils.parseEther("1"), {value: ethers.utils.parseEther("1")});
+    }
+  }
+
   return (
     <div style={betSlipStyling}>
       <h2>BetSlip (this does nothing atm)</h2>
@@ -22,7 +30,7 @@ const BetSlip: FC = () => {
       <h3>Total Amount: x ETH</h3>
       <h5>Enter an amount to bid:</h5>
       <input></input>
-      <input type='submit' />
+      <input type='submit' onClick={testLog} />
     </div>
   );
 };
