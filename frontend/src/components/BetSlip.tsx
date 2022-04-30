@@ -24,7 +24,7 @@ const BetSlip: FC = () => {
       <h3>Total Amount: x ETH</h3>
       <h5>Enter an amount to bid:</h5>
       <input></input>
-      <input type='submit' />
+      <input type='submit' onClick={testLog} />
       <br />
       <h3>Team B</h3>
       <h3>Total Amount: x ETH</h3>
