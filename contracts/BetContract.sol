@@ -69,19 +69,13 @@ contract BetContract {
         fixtureIdList.push(fixtureCounter - 1);
     }
 
-    /**
-     * Need to work out an efficient way to return mappings as cant do it directly
-     */
-    //function getFixtures() public { 
-    //    return fixtures;
-    //}
+    function getFixtures() public view returns (uint[] memory) { 
+        return fixtureIdList;
+    }
 
-    /**
-     * Same for struct arrays
-     */
-    //function getUsersBets() public {
-    //    return userBets[msg.sender];
-    //}
+    function getBets() public view returns (uint[] memory) { 
+        return betIdList;
+    }
 
     /**
      * A function to place bets on a particular sport.
