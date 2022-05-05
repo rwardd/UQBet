@@ -10,9 +10,10 @@ import { ethers } from "ethers";
 
 // We import the contract's artifacts and address here, as we are going to be
 // using them with ethers
-import TokenArtifact from "../contracts/Token.json";
+import TokenArtifact from "../contracts/BetContract.json";
 import contractAddress from "../contracts/contract-address.json";
 import BetSlip from "./BetSlip";
+import { Web3Provider } from "@ethersproject/providers";
 
 // This is the Hardhat Network id, you might change it in the hardhat.config.js.
 // If you are using MetaMask, be sure to change the Network id to 1337.
@@ -26,13 +27,14 @@ const UQBet: FC = () => {
     selectedAddress,
     networkError,
     setSelectedAddress,
-    setTokenData,
     setBalance,
     resetState,
   } = useContext(GlobalState);
 
-  let _token: ethers.Contract;
+  // eslint-disable-next-line
+  let _betContract: ethers.Contract;
   let _pollDataInterval: any;
+  let _provider: Web3Provider;
 
   /**
    * Function defintions
@@ -51,27 +53,24 @@ const UQBet: FC = () => {
 
   async function _initializeEthers() {
     // We first initialize ethers by creating a provider using window.ethereum
-    const _provider = new ethers.providers.Web3Provider(window.ethereum);
+    _provider = new ethers.providers.Web3Provider(window.ethereum);
 
     // Then, we initialize the contract using that provider and the token's
     // artifact. You can do this same thing with your contracts.
-    _token = new ethers.Contract(
+    _betContract = new ethers.Contract(
       contractAddress.Token,
       TokenArtifact.abi,
       _provider.getSigner(0)
     );
   }
 
-  async function _getTokenData() {
-    const name = await _token.name();
-    const symbol = await _token.symbol();
+  async function _updateEthBalance(userAddress: string) {
+    const balance = ethers.utils.formatEther(
+      await _provider.getBalance(userAddress)
+    );
 
-    setTokenData({ name, symbol });
-  }
-
-  async function _updateBalance(userAddress: string) {
-    const balance = await _token.balanceOf(userAddress);
-    setBalance(balance);
+    // Limit to two decimal places
+    setBalance(Number(balance).toFixed(2));
   }
 
   // The next two methods are needed to start and stop polling data. While
@@ -82,10 +81,10 @@ const UQBet: FC = () => {
   // don't need to poll it. If that's the case, you can just fetch it when you
   // initialize the app, as we do with the token data.
   function _startPollingData(userAddress: string) {
-    _pollDataInterval = setInterval(() => _updateBalance(userAddress), 1000);
+    _pollDataInterval = setInterval(() => _updateEthBalance(userAddress), 1000);
 
     // We run it once immediately so we don't have to wait for it
-    _updateBalance(userAddress);
+    _updateEthBalance(userAddress);
   }
 
   function _stopPollingData() {
@@ -105,7 +104,6 @@ const UQBet: FC = () => {
     // Fetching the token data and the user's balance are specific to this
     // sample project, but you can reuse the same initialization pattern.
     _initializeEthers();
-    _getTokenData();
     _startPollingData(userAddress);
   }
 

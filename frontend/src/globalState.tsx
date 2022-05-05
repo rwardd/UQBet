@@ -5,13 +5,10 @@ import React, { ReactNode, useState } from "react";
 export const GlobalState = React.createContext<Partial<IGlobalState>>({});
 
 export interface IGlobalState {
-  // The info of the token (i.e. It's Name and symbol)
-  tokenData: ITokenData | undefined;
-  setTokenData: any;
   // The user's address
   selectedAddress: string | undefined;
   setSelectedAddress: any;
-  // The user's balance
+  // The user's ethereum balance
   balance: any;
   setBalance: any;
   // The ID about transactions being sent
@@ -30,17 +27,12 @@ export interface IGlobalState {
 interface GlobalStateProviderProps {
   children: ReactNode;
 }
-interface ITokenData {
-  name: string;
-  symbol: string;
-}
 
 export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = (
   props
 ) => {
   const { children } = props;
 
-  const [tokenData, setTokenData] = useState(undefined);
   const [selectedAddress, setSelectedAddress] = useState(undefined);
   const [balance, setBalance] = useState(undefined);
   const [txBeingSent, setTxBeingSet] = useState(undefined);
@@ -48,7 +40,6 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = (
   const [networkError, setNetworkError] = useState(undefined);
 
   function resetState() {
-    setTokenData(undefined);
     setSelectedAddress(undefined);
     setBalance(undefined);
     setTxBeingSet(undefined);
@@ -57,8 +48,6 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = (
   }
 
   const initialState: IGlobalState = {
-    tokenData,
-    setTokenData,
     selectedAddress,
     setSelectedAddress,
     balance,

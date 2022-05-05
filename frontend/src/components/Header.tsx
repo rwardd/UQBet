@@ -4,7 +4,7 @@ import { COLORS, FONT_SIZE } from "../theme";
 import { Loading } from "./Loading";
 
 const Header: FC = () => {
-  const { tokenData, balance, selectedAddress } = useContext(GlobalState);
+  const { balance, selectedAddress } = useContext(GlobalState);
   const logo = (
     <h1
       style={{
@@ -16,12 +16,12 @@ const Header: FC = () => {
   );
 
   const accountDisplay = () => {
-    if (!tokenData || !balance) {
+    if (!balance) {
       return <Loading />;
     } else {
       return (
         <div style={accountDisplayStyling}>
-          <h3>Balance: {`${balance} ${tokenData.symbol}`}</h3>
+          <h3>Balance: {`${balance} ETH`}</h3>
           <h5>Account: {`${selectedAddress}`} </h5>
         </div>
       );
