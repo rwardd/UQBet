@@ -1,4 +1,4 @@
-import React, { FC, useContext } from "react";
+import React, { FC, useContext, useState } from "react";
 import { GlobalState } from "../globalState";
 import { COLORS } from "../theme";
 import { ConnectWallet } from "./ConnectWallet";
@@ -14,6 +14,7 @@ import TokenArtifact from "../contracts/BetContract.json";
 import contractAddress from "../contracts/contract-address.json";
 import BetSlip from "./BetSlip";
 import { Web3Provider } from "@ethersproject/providers";
+import AdminDashboard from "./AdminDashboard";
 
 // This is the Hardhat Network id, you might change it in the hardhat.config.js.
 // If you are using MetaMask, be sure to change the Network id to 1337.
@@ -31,8 +32,9 @@ const UQBet: FC = () => {
     resetState,
   } = useContext(GlobalState);
 
-  // eslint-disable-next-line
   let _betContract: ethers.Contract;
+  const [_contractOwner, _setContractOwner] = useState();
+  // let _contractOwner: string = "no contract loaded";
   let _pollDataInterval: any;
   let _provider: Web3Provider;
 
@@ -62,6 +64,8 @@ const UQBet: FC = () => {
       TokenArtifact.abi,
       _provider.getSigner(0)
     );
+
+    _setContractOwner((await _betContract.owner()).toLowerCase());
   }
 
   async function _updateEthBalance(userAddress: string) {
@@ -93,17 +97,13 @@ const UQBet: FC = () => {
   }
 
   function _initialize(userAddress: string) {
-    // This method initializes the dapp
+    // First we initialize ethers
+    _initializeEthers();
 
-    // We first store the user's address in the component's state
+    // Then we store the user's address in the component's state
     setSelectedAddress(userAddress);
 
-    // Then, we initialize ethers, fetch the token's data, and start polling
-    // for the user's balance.
-
-    // Fetching the token data and the user's balance are specific to this
-    // sample project, but you can reuse the same initialization pattern.
-    _initializeEthers();
+    // Start polling the users eth balance
     _startPollingData(userAddress);
   }
 
@@ -184,12 +184,22 @@ const UQBet: FC = () => {
     );
   }
 
+  // Connected address is owner of the contract.
+  if (selectedAddress === _contractOwner) {
+    return (
+      <>
+        <Header />
+        <AdminDashboard />
+      </>
+    );
+  }
+
   return (
     <>
       <Header />
       <BetSlip />
     </>
   );
-};
+};;
 
 export default UQBet;
