@@ -30,7 +30,6 @@ const UQBet: FC = () => {
     setSelectedAddress,
     setBalance,
     setContract,
-    bettingContract,
     resetState,
   } = useContext(GlobalState);
 
