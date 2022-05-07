@@ -67,10 +67,18 @@ contract BetContract {
         newFixture.invalidated = false;
         
         fixtureIdList.push(fixtureCounter - 1);
+        fixtures[fixtureCounter - 1] = newFixture;
     }
 
     function getFixtures() public view returns (uint[] memory) { 
         return fixtureIdList;
+    }
+
+    /**
+     * Read only function to retrieve a fixture.
+     */
+    function getFixtureHome(uint fixtureId) public view returns (string memory) {
+        return fixtures[fixtureId].home;
     }
 
     function getBets() public view returns (uint[] memory) { 
