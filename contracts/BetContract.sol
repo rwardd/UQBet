@@ -77,8 +77,8 @@ contract BetContract {
     /**
      * Read only function to retrieve a fixture.
      */
-    function getFixtureHome(uint fixtureId) public view returns (string memory) {
-        return fixtures[fixtureId].home;
+    function getFixture(uint fixtureId) public view returns (Fixture memory) {
+        return fixtures[fixtureId];
     }
 
     function getBets() public view returns (uint[] memory) { 

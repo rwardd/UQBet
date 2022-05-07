@@ -11,7 +11,7 @@ const GetFixtures: FC = () => {
       throw new Error("Betting Contract not available");
     } else {
       const fixtures = await bettingContract.getFixtures();
-      const f = await bettingContract.getFixtureHome(0);
+      const f = await bettingContract.getFixture(fixtures[0]);
       console.log(fixtures);
       console.log(f);
       //   setFixture(f);
