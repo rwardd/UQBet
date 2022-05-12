@@ -35,6 +35,7 @@ const AddFixture: FC = () => {
       if (!bettingContract) {
         throw new Error("Betting Contract not available");
       }
+      console.log(bettingContract.address)
       const tx = await bettingContract.addFixture(home, away, date);
       setTxBeingSet(tx.hash);
       // We use .wait() to wait for the transaction to be mined. This method
