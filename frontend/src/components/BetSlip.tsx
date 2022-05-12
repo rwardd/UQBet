@@ -1,117 +1,77 @@
-import React, { FC, useContext, useEffect, useState } from "react";
+import React, { FC, useContext, useState } from "react";
 import { COLORS, BOX } from "../theme";
 import { GlobalState } from "../globalState";
 import { ethers } from "ethers";
+import GetFixtures from "./viewComponents/GetFixtures";
+import { Fixture } from "../types";
+import GetBets from "./viewComponents/GetBets";
 
 const BetSlip: FC = () => {
-  let fixturesList: any[] = [];
-  let teamA = "";
-  let teamB = "";
-  let teamAVal = "";
-  let teamBVal = "";
   const { bettingContract } = useContext(GlobalState);
-  const [fixtures, setFixture] = useState<any[]>(fixturesList);
-  const [dropValue, setDropValue] = useState("0");
-  // const componentIsMounted = useRef(true);
 
-  async function _getFixtures() {
-    if (!bettingContract) {
-      throw new Error("Betting Contract not available");
-    } else {
-      //const fixtures = await bettingContract.getFixtures();
-      let fixtureList: any[] = [];
-      // if (componentIsMounted.current) {
-      const fixtureCount = await bettingContract.getFixtureCount();
-      for (let i = 0; i < fixtureCount; i++) {
-        fixtureList.push(await bettingContract.getFixture(i));
-      }
-      // }
+  const [homeTeamBet, setHomeTeamBet] = useState(0);
+  const [awayTeamBet, setAwayTeamBet] = useState(0);
+  const [selectedFixture, setSelectedFixture] = useState<null | Fixture>(null);
 
-      return fixtureList;
-    }
-  }
-
-  useEffect(() => {
-    (async () => {
-      const fixtureList = await _getFixtures();
-      setFixture(fixtureList);
-    })();
-  });
-
-  if (fixtures.length !== 0) {
-    teamA = fixtures[0][1].toString();
-    teamB = fixtures[0][2].toString();
-  }
-
-  console.log(fixtures);
-
-  const handleDropChange = (event: any) => {
-    setDropValue(event.target.value);
-    teamA = fixtures[parseInt(event.target.value)][1];
-    teamB = fixtures[parseInt(event.target.value)][2];
-
-    //console.log(teamA, teamB)
-  };
-
-  async function handleTeamASubmit(event: any) {
+  async function submitHomeTeamBet(event: any) {
+    event.preventDefault();
     if (!bettingContract) {
       throw new Error("Betting Contract not available");
     } else {
       await bettingContract.placeBet(
-        parseInt(dropValue),
-        teamA,
-        ethers.utils.parseEther(teamAVal),
-        { value: ethers.utils.parseEther(teamAVal) }
+        selectedFixture?.fixId,
+        selectedFixture?.home,
+        ethers.utils.parseEther(homeTeamBet.toString()),
+        { value: ethers.utils.parseEther(homeTeamBet.toString()) }
       );
     }
   }
 
-  async function handleTeamBSubmit(event: any) {
+  async function submitAwayTeamBet(event: any) {
+    event.preventDefault();
     if (!bettingContract) {
       throw new Error("Betting Contract not available");
     } else {
       await bettingContract.placeBet(
-        parseInt(dropValue),
-        teamB,
-        ethers.utils.parseEther(teamBVal),
-        { value: ethers.utils.parseEther(teamBVal) }
+        selectedFixture?.fixId,
+        selectedFixture?.away,
+        ethers.utils.parseEther(awayTeamBet.toString()),
+        { value: ethers.utils.parseEther(awayTeamBet.toString()) }
       );
     }
   }
 
-  function handleInputAChange(event: any) {
-    teamAVal = event.target.value.toString();
-    //console.log(event.target.value)
-  }
-
-  function handleInputBChange(event: any) {
-    teamBVal = event.target.value.toString();
-    //console.log(event.target.value)
-  }
   return (
     <div style={betSlipStyling}>
-      <h2>BetSlip (this does nothing atm)</h2>
-      <div>
-        <h3>Select Fixture</h3>
-        <select value={dropValue} onChange={handleDropChange}>
-          {fixtures.map((fixture) => (
-            <option value={fixture[0].toString()}>
-              {fixture[0].toString()}
-            </option>
-          ))}
-        </select>
-      </div>
-      <h3>Team A: {teamA}</h3>
-      <h3>Total Amount: x ETH</h3>
-      <h5>Enter an amount to bid:</h5>
-      <input onChange={handleInputAChange}></input>
-      <input type='submit' onClick={handleTeamASubmit} />
+      <h2>BetSlip</h2>
+      <GetFixtures getSelectOption setSelectedFixture={setSelectedFixture} />
+      <h3>Home Team: {selectedFixture && selectedFixture.home}</h3>
+      {/* <h3>Total Amount: x ETH</h3> */}
+      <form onSubmit={submitHomeTeamBet}>
+        <label>
+          Enter an amount to bid:
+          <input
+            type='number'
+            value={homeTeamBet}
+            onChange={(e) => setHomeTeamBet(parseInt(e.target.value))}
+          />
+          <button>Submit</button>
+        </label>
+      </form>
       <br />
-      <h3>Team B: {teamB}</h3>
-      <h3>Total Amount: x ETH</h3>
-      <h5>Enter an amount to bid:</h5>
-      <input onChange={handleInputBChange}></input>
-      <input type='submit' onClick={handleTeamBSubmit} />
+      <h3>Away Team: {selectedFixture && selectedFixture.away}</h3>
+      <form onSubmit={submitAwayTeamBet}>
+        <label>
+          Enter an amount to bid:
+          <input
+            type='number'
+            value={awayTeamBet}
+            onChange={(e) => setAwayTeamBet(parseInt(e.target.value))}
+          />
+          <button>Submit</button>
+        </label>
+      </form>
+      <GetBets />
     </div>
   );
 };

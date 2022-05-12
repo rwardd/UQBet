@@ -1,111 +1,91 @@
 import React, { FC, useContext, useEffect, useState, useRef } from "react";
 import { GlobalState } from "../../globalState";
+import { Fixture } from "../../types";
 
-const GetFixtures: FC = () => {
-  let fixturesList: any[] = [];
+interface GetFixturesProps {
+  getSelectOption?: boolean;
+  setSelectedFixture?: React.Dispatch<React.SetStateAction<any>>;
+}
+
+const GetFixtures: FC<GetFixturesProps> = (props) => {
+  const { getSelectOption, setSelectedFixture } = props;
   const { bettingContract } = useContext(GlobalState);
-  const [fixtures, setFixture] = useState<any[]>(fixturesList);
-  const [bets, setBets] = useState<any[]>(fixturesList);
-  const componentIsMounted = useRef(true);
+  const [fixtures, setFixtures] = useState<any[]>([]);
+  const hasFetchedData = useRef(false);
 
-  async function _getFixtures() {
-    if (!bettingContract) {
-      throw new Error("Betting Contract not available");
-    } else {
-      //const fixtures = await bettingContract.getFixtures();
-      let fixtureList: any[] = [];
-      if (componentIsMounted.current) {
+  useEffect(() => {
+    async function _getFixtures() {
+      if (!bettingContract) {
+        throw new Error("Betting Contract not available");
+      } else {
+        let fixtureList = [];
         const fixtureCount = await bettingContract.getFixtureCount();
+
         for (let i = 0; i < fixtureCount; i++) {
           fixtureList.push(await bettingContract.getFixture(i));
         }
+
+        setFixtures(fixtureList);
       }
-
-      return fixtureList;
     }
-  }
 
-  async function _getBets() {
-    if (!bettingContract) {
-      throw new Error("Betting Contract not available");
-    } else {
-      let betList: any[] = [];
-      const betCount = await bettingContract.getBetCounter();
-
-      console.log(betCount);
-      for (let i = 0; i < betCount; i++) {
-        betList.push(await bettingContract.getBet(i));
-      }
-      return betList;
+    if (!hasFetchedData.current) {
+      // Fetch Data
+      _getFixtures();
+      hasFetchedData.current = true;
     }
-  }
-
-  useEffect(() => {
-    (async () => {
-      const fixtureList = await _getFixtures();
-      const betList = await _getBets();
-      setFixture(fixtureList);
-      setBets(betList);
-    })();
   });
 
-  function populateTableData(fixtureList: any[]) {
-    setFixture(fixtureList);
-  }
-
-  console.log(fixtures);
-
-  function renderTableData() {
-    return fixtures.map((fixture) => {
+  function tableData() {
+    const fixtureData = fixtures.map((fixture: Fixture) => {
+      const { fixId, home, away, date } = fixture;
       return (
-        <tr key={fixture[0].toString()}>
-          <td>{fixture[0].toString()}</td>
-          <td>{fixture[1].toString()}</td>
-          <td>{fixture[2].toString()}</td>
-          <td>{fixture[3].toString()}</td>
+        <tr key={fixId.toString()}>
+          <td>{fixId.toString()}</td>
+          <td>{home}</td>
+          <td>{away}</td>
+          <td>{date}</td>
+          {getSelectOption && setSelectedFixture && (
+            <td>
+              <button onClick={() => setSelectedFixture(fixture)}>
+                Select
+              </button>
+            </td>
+          )}
         </tr>
       );
     });
+
+    return <tbody style={innerFixtureStyle}>{fixtureData}</tbody>;
   }
 
-  function renderTableHeader() {
-    const header = ["Fixture ID", "Home", "Away", "Date"];
-    return header.map((key, index) => {
-      return <th key={index}>{key.toUpperCase()}</th>;
+  function tableHeader() {
+    let columns = ["Fixture ID", "Home", "Away", "Date"];
+    if (getSelectOption) {
+      columns.push("Select");
+    }
+
+    const headers = columns.map((columnTitle) => {
+      return <th key={columnTitle}>{columnTitle.toUpperCase()}</th>;
     });
-  }
 
-  function renderBetHeader() {
-    const header = ["Bet ID", "Amount", "FixtureID", "Team", "PunterID"];
-    return header.map((key, index) => {
-      return <th key={index}>{key.toUpperCase()}</th>;
-    });
+    return (
+      <thead>
+        <tr>{headers}</tr>
+      </thead>
+    );
   }
-
-  function renderBetData() {
-    console.log(bets);
-  }
-
-  renderBetData();
 
   return (
     <div>
-      <h3>Get fixtures</h3>
+      <h3>Fixtures</h3>
       <table style={fixtureStyle}>
-        <tbody style={innerFixtureStyle}>
-          <tr>{renderTableHeader()}</tr>
-          {renderTableData()}
-        </tbody>
-      </table>
-      <h3>Get Bets</h3>
-      <table style={fixtureStyle}>
-        <tbody style={innerFixtureStyle}>
-          <tr>{renderBetHeader()}</tr>
-        </tbody>
+        {tableHeader()}
+        {tableData()}
       </table>
     </div>
   );
-};
+};;
 
 const fixtureStyle: React.CSSProperties = {
   border: "solid black",
