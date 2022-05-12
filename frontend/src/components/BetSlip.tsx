@@ -1,7 +1,6 @@
-import React, { FC, useContext, useEffect, useState, useRef } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
 import { COLORS, BOX } from "../theme";
 import { GlobalState } from "../globalState";
-import { render } from "@testing-library/react";
 import { ethers } from "ethers";
 
 const BetSlip: FC = () => {
@@ -12,11 +11,8 @@ const BetSlip: FC = () => {
   let teamBVal = "";
   const { bettingContract } = useContext(GlobalState);
   const [fixtures, setFixture] = useState<any[]>(fixturesList);
-  const [dropValue, setDropValue] = useState('0');
- // const componentIsMounted = useRef(true);
-
-
-
+  const [dropValue, setDropValue] = useState("0");
+  // const componentIsMounted = useRef(true);
 
   async function _getFixtures() {
     if (!bettingContract) {
@@ -24,54 +20,49 @@ const BetSlip: FC = () => {
     } else {
       //const fixtures = await bettingContract.getFixtures();
       let fixtureList: any[] = [];
-     // if (componentIsMounted.current) {
-        const fixtureCount = await bettingContract.getFixtureCount();
-        for (let i = 0; i < fixtureCount; i++) {
-          fixtureList.push(await bettingContract.getFixture(i));
-        }
-     // }
+      // if (componentIsMounted.current) {
+      const fixtureCount = await bettingContract.getFixtureCount();
+      for (let i = 0; i < fixtureCount; i++) {
+        fixtureList.push(await bettingContract.getFixture(i));
+      }
+      // }
 
       return fixtureList;
-
-
-
     }
   }
 
   useEffect(() => {
-  //  if (componentIsMounted.current) {
     (async () => {
       const fixtureList = await _getFixtures();
       setFixture(fixtureList);
-
     })();
-  //}
-
-  }, [])
-
+  });
 
   if (fixtures.length !== 0) {
     teamA = fixtures[0][1].toString();
     teamB = fixtures[0][2].toString();
   }
 
-  console.log(fixtures)
+  console.log(fixtures);
 
   const handleDropChange = (event: any) => {
+    setDropValue(event.target.value);
+    teamA = fixtures[parseInt(event.target.value)][1];
+    teamB = fixtures[parseInt(event.target.value)][2];
 
-    setDropValue(event.target.value)
-    teamA = fixtures[parseInt(event.target.value)][1]
-    teamB = fixtures[parseInt(event.target.value)][2]
-    
     //console.log(teamA, teamB)
-
-  }
+  };
 
   async function handleTeamASubmit(event: any) {
     if (!bettingContract) {
       throw new Error("Betting Contract not available");
     } else {
-      await bettingContract.placeBet(parseInt(dropValue), teamA, ethers.utils.parseEther(teamAVal), { value: ethers.utils.parseEther(teamAVal) })
+      await bettingContract.placeBet(
+        parseInt(dropValue),
+        teamA,
+        ethers.utils.parseEther(teamAVal),
+        { value: ethers.utils.parseEther(teamAVal) }
+      );
     }
   }
 
@@ -79,19 +70,22 @@ const BetSlip: FC = () => {
     if (!bettingContract) {
       throw new Error("Betting Contract not available");
     } else {
-      await bettingContract.placeBet(parseInt(dropValue), teamB, ethers.utils.parseEther(teamBVal), { value: ethers.utils.parseEther(teamBVal) })
+      await bettingContract.placeBet(
+        parseInt(dropValue),
+        teamB,
+        ethers.utils.parseEther(teamBVal),
+        { value: ethers.utils.parseEther(teamBVal) }
+      );
     }
   }
 
-
   function handleInputAChange(event: any) {
-    teamAVal = event.target.value.toString()
+    teamAVal = event.target.value.toString();
     //console.log(event.target.value)
   }
 
-
   function handleInputBChange(event: any) {
-    teamBVal = event.target.value.toString()
+    teamBVal = event.target.value.toString();
     //console.log(event.target.value)
   }
   return (
@@ -101,7 +95,9 @@ const BetSlip: FC = () => {
         <h3>Select Fixture</h3>
         <select value={dropValue} onChange={handleDropChange}>
           {fixtures.map((fixture) => (
-            <option value={fixture[0].toString()}>{fixture[0].toString()}</option>
+            <option value={fixture[0].toString()}>
+              {fixture[0].toString()}
+            </option>
           ))}
         </select>
       </div>
