@@ -1,20 +1,20 @@
 import React, { FC, useContext, useState } from "react";
-import { GlobalState } from "../globalState";
-import { COLORS } from "../theme";
-import { ConnectWallet } from "./utils/ConnectWallet";
-import Header from "./Header";
-import { NoWalletDetected } from "./utils/NoWalletDetected";
+import { GlobalState } from "../../globalState";
+import { COLORS } from "../../theme";
+import { ConnectWallet } from "../utils/ConnectWallet";
+import Header from "../Header";
+import { NoWalletDetected } from "../utils/NoWalletDetected";
 
 // We'll use ethers to interact with the Ethereum network and our contract
 import { ethers } from "ethers";
 
 // We import the contract's artifacts and address here, as we are going to be
 // using them with ethers
-import TokenArtifact from "../contracts/BetContract.json";
-import contractAddress from "../contracts/contract-address.json";
-import BetSlip from "./BetSlip";
+import TokenArtifact from "../../contracts/BetContract.json";
+import contractAddress from "../../contracts/contract-address.json";
+import BetSlip from "../BetSlip";
 import { Web3Provider } from "@ethersproject/providers";
-import AdminDashboard from "./AdminDashboard";
+import AdminDashboard from "../AdminDashboard";
 
 // This is the Hardhat Network id, you might change it in the hardhat.config.js.
 // If you are using MetaMask, be sure to change the Network id to 1337.
