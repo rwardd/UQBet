@@ -34,8 +34,6 @@ describe("BetContract contract", function () {
 
         // If the callback function is async, Mocha will `await` it.
         it("Should test for account balances", async function() {
-        let balance = await prov.getBalance(owner.address)
-        console.log("Balance", balance);
         });
 
         it("Should set the correct owner", async function(){
@@ -81,12 +79,48 @@ describe("BetContract contract", function () {
         });
 
         it("Should not be able to create a Fixture as a non-owner", async function() {
-            await expect(betContract.connect(addr1).addFixture("Red Sox","White Sox", "14 May 22")).to.be.revertedWith("Only UQ Sports Administration can add Fixtures");
+            await expect(betContract.connect(addr1).addFixture("Red Sox","White Sox", "14 May 22"))
+                .to.be.revertedWith("Only UQ Sports Administration can add Fixtures");
         });
     });
 
     describe("Bet", function () {
+        it("Should not be able to place a bet as owner", async function() {
+            await betContract.addFixture("Red Sox","White Sox", "14 May 22");
+            await expect(betContract.placeBet(0, "Red Sox", 50)).to.be.revertedWith("UQ Sports Administration cannot place bets");
+            
+        });
 
+        it("Amount bet should be greater than 0", async function() {
+            await betContract.addFixture("Red Sox","White Sox", "14 May 22");
+            await expect(betContract.connect(addr1).placeBet(0, "Red Sox", 0)).to.be.revertedWith("Bet amount must be greater than 0");
+        });
+
+        it("Should be able to place valid bet as punter", async function() {
+            //Contract should have no funds
+            expect(await prov.getBalance(betContract.address)).to.equal(0);
+
+            //Add a Fixture to bet on
+            await betContract.addFixture("Red Sox","White Sox", "14 May 22");
+
+            //Ensure Bet counter is initialised
+            expect(await betContract.getBetCounter()).to.equal(0);
+
+            //Place Bet
+            await betContract.connect(addr1).placeBet(0, "Red Sox", 50, {value: 50});
+            expect((await betContract.getBet((await (await betContract.getFixture(0)).bets)[0])).betId).to.equal(0);
+            expect((await betContract.getBet((await (await betContract.getFixture(0)).bets)[0])).fixId).to.equal(0);
+            expect((await betContract.getBet((await (await betContract.getFixture(0)).bets)[0])).punter).to.equal(addr1.address);
+            expect((await betContract.getBet((await (await betContract.getFixture(0)).bets)[0])).team).to.equal("Red Sox");
+            expect((await betContract.getBet((await (await betContract.getFixture(0)).bets)[0])).amount).to.equal(50);
+            expect((await betContract.getBet((await (await betContract.getFixture(0)).bets)[0])).won).to.equal(false);
+
+            //Contract should hold bet amount
+            expect(await prov.getBalance(betContract.address)).to.equal(50);
+
+            //Ensure Bet Counter has been incremented
+            expect(await betContract.getBetCounter()).to.equal(1);
+        });
     });
 
     describe("Set Winner", function () {
