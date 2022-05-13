@@ -1,3 +1,12 @@
+import {
+  Button,
+  Heading,
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "grommet";
 import React, { FC, useContext, useEffect, useState, useRef } from "react";
 import { GlobalState } from "../../globalState";
 import { Fixture } from "../../types";
@@ -40,58 +49,67 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
     const fixtureData = fixtures.map((fixture: Fixture) => {
       const { fixId, home, away, date } = fixture;
       return (
-        <tr key={fixId.toString()}>
-          <td>{fixId.toString()}</td>
-          <td>{home}</td>
-          <td>{away}</td>
-          <td>{date}</td>
+        <TableRow key={fixId.toString()}>
+          <TableCell>{home}</TableCell>
+          <TableCell>{away}</TableCell>
+          <TableCell>{date}</TableCell>
           {getSelectOption && setSelectedFixture && (
-            <td>
-              <button onClick={() => setSelectedFixture(fixture)}>
-                Select
-              </button>
-            </td>
+            <TableCell>
+              {
+                <Button
+                  secondary
+                  label='Select'
+                  size='small'
+                  onClick={() => setSelectedFixture(fixture)}
+                />
+              }
+            </TableCell>
           )}
-        </tr>
+        </TableRow>
       );
     });
 
-    return <tbody style={innerFixtureStyle}>{fixtureData}</tbody>;
+    return <TableBody>{fixtureData}</TableBody>;
   }
 
   function tableHeader() {
-    let columns = ["Fixture ID", "Home", "Away", "Date"];
+    let columns = ["Home", "Away", "Date"];
     if (getSelectOption) {
       columns.push("Select");
     }
 
-    const headers = columns.map((columnTitle) => {
-      return <th key={columnTitle}>{columnTitle.toUpperCase()}</th>;
+    const tableCells = columns.map((columnTitle) => {
+      return (
+        <TableCell scope='col' border='bottom' key={columnTitle}>
+          {columnTitle}
+        </TableCell>
+      );
     });
 
     return (
-      <thead>
-        <tr>{headers}</tr>
-      </thead>
+      <TableHeader>
+        <TableRow>{tableCells}</TableRow>
+      </TableHeader>
+    );
+  }
+
+  function table() {
+    return (
+      <Table>
+        {tableHeader()}
+        {tableData()}
+      </Table>
     );
   }
 
   return (
-    <div>
-      <h3>Fixtures</h3>
-      <table style={fixtureStyle}>
-        {tableHeader()}
-        {tableData()}
-      </table>
+    <div style={{ marginBottom: "15px" }}>
+      <Heading margin={{ bottom: "small" }} level='2'>
+        Fixtures
+      </Heading>
+      {fixtures.length === 0 ? "There are currently no fixtures" : table()}
     </div>
   );
-};;
-
-const fixtureStyle: React.CSSProperties = {
-  border: "solid black",
-};
-const innerFixtureStyle: React.CSSProperties = {
-  border: "solid black",
 };
 
 export default GetFixtures;

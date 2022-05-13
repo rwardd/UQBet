@@ -1,6 +1,8 @@
 import React, { FC, useContext, useState } from "react";
 import { GlobalState } from "../../globalState";
-import { ERROR_CODE_TX_REJECTED_BY_USER } from "../../utils";
+import { ERROR_CODE_TX_REJECTED_BY_USER } from "../../constants";
+// import FormField from "../forms/FormField";
+import { Box, Button, DateInput, Form, FormField, TextInput} from "grommet";
 
 const AddFixture: FC = () => {
   const { setTransactionError, bettingContract, setTxBeingSet } =
@@ -35,7 +37,6 @@ const AddFixture: FC = () => {
       if (!bettingContract) {
         throw new Error("Betting Contract not available");
       }
-      console.log(bettingContract.address)
       const tx = await bettingContract.addFixture(home, away, date);
       setTxBeingSet(tx.hash);
       // We use .wait() to wait for the transaction to be mined. This method
@@ -98,37 +99,41 @@ const AddFixture: FC = () => {
 
   return (
     <>
-      <h3>Add fixture</h3>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Home team
-          <input
-            type='text'
+      <Form onSubmit={handleSubmit} onReset={resetForm}>
+        <FormField label='Home team' type='text'>
+          <TextInput
+            placeholder='Home team'
             value={homeTeam}
             onChange={(e) => setHomeTeam(e.target.value)}
           />
-        </label>
-        <label>
-          Away team
-          <input
-            type='text'
+        </FormField>
+        <FormField label='Away team' type='text'>
+          <TextInput
+            placeholder='Away team'
             value={awayTeam}
             onChange={(e) => setAwayTeam(e.target.value)}
           />
-        </label>
-        <label>
-          Date
-          <input
-            type='text'
+        </FormField>
+        <FormField label='Date' type='date'>
+          <DateInput
+            format='mm/dd/yyyy'
             value={date}
-            onChange={(e) => setDate(e.target.value)}
+            onChange={({ value }) =>
+              setDate(new Date(value.toString()).toLocaleDateString())
+            }
           />
-        </label>
-        <button disabled={isFormEmpty() || status === "submitting"}>
-          Submit
-        </button>
+        </FormField>
+        <Box direction='row' gap='medium' margin={{ top: "medium" }}>
+          <Button
+            type='submit'
+            primary
+            label='Submit'
+            disabled={isFormEmpty() || status === "submitting"}
+          />
+          <Button type='reset' label='Reset' />
+        </Box>
         {error !== null && <p className='Error'>{error.message}</p>}
-      </form>
+      </Form>
     </>
   );
 };

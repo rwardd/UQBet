@@ -1,15 +1,20 @@
+import { Button } from "grommet";
 import React, { FC } from "react";
+import { Link } from "react-router-dom";
 import { BOX, COLORS } from "../theme";
-import AddFixture from "./transactionComponents/AddFixture";
 import GetBets from "./viewComponents/GetBets";
 import GetFixtures from "./viewComponents/GetFixtures";
 
 const AdminDashboard: FC = () => {
   return (
     <div style={adminDashboardStyle}>
-      <h2>You are the owner of this contract</h2>
+      <div style={dashboardHeaderStyle}>
+        <h2>You are the owner of this contract</h2>
+        <Link to='/admin/AddFixture'>
+          <Button primary label='Add Fixture' />
+        </Link>
+      </div>
       <br />
-      <AddFixture />
       <GetFixtures />
       <GetBets />
       <h3>Set Winner (Transaction)</h3>
@@ -25,6 +30,12 @@ const adminDashboardStyle: React.CSSProperties = {
   padding: BOX.padding,
   width: "75%",
   margin: "auto",
+};
+
+const dashboardHeaderStyle: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "space-between",
 };
 
 export default AdminDashboard;

@@ -5,6 +5,7 @@ import { ethers } from "ethers";
 import GetFixtures from "./viewComponents/GetFixtures";
 import { Fixture } from "../types";
 import GetBets from "./viewComponents/GetBets";
+import { Box, Heading } from "grommet";
 
 const BetSlip: FC = () => {
   const { bettingContract } = useContext(GlobalState);
@@ -43,7 +44,7 @@ const BetSlip: FC = () => {
 
   return (
     <div style={betSlipStyling}>
-      <h2>BetSlip</h2>
+      <h1 style={{ textAlign: "center", fontSize: "50px" }}>Place a bet</h1>
       <GetFixtures getSelectOption setSelectedFixture={setSelectedFixture} />
       <h3>Home Team: {selectedFixture && selectedFixture.home}</h3>
       {/* <h3>Total Amount: x ETH</h3> */}

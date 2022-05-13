@@ -1,7 +1,7 @@
 import React, { FC, useContext } from "react";
 import { GlobalState } from "../globalState";
 import { COLORS, FONT_SIZE } from "../theme";
-import { Loading } from "./Loading";
+import { Loading } from "./utils/Loading";
 
 const Header: FC = () => {
   const { balance, selectedAddress } = useContext(GlobalState);
