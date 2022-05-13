@@ -118,7 +118,9 @@ const AddFixture: FC = () => {
           <DateInput
             format='mm/dd/yyyy'
             value={date}
-            onChange={({ value }) => setDate(value.toString())}
+            onChange={({ value }) =>
+              setDate(new Date(value.toString()).toLocaleDateString())
+            }
           />
         </FormField>
         <Box direction='row' gap='medium' margin={{ top: "medium" }}>
