@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import { BOX, COLORS } from "../theme";
 import AddFixture from "./transactionComponents/AddFixture";
+import GetBets from "./viewComponents/GetBets";
 import GetFixtures from "./viewComponents/GetFixtures";
 
 const AdminDashboard: FC = () => {
@@ -10,6 +11,7 @@ const AdminDashboard: FC = () => {
       <br />
       <AddFixture />
       <GetFixtures />
+      <GetBets />
       <h3>Set Winner (Transaction)</h3>
       <h3>Distribute Winnings (Transaction)</h3>
     </div>
