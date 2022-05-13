@@ -1,5 +1,4 @@
 pragma solidity ^0.8.0;
-//pragma experimental ABIEncoderV2;
 
 import "hardhat/console.sol";
 
@@ -31,8 +30,8 @@ contract BetContract {
     uint uqSportsCut;
     bool locked;
     
-    mapping(uint => Fixture) fixtures;
-    mapping(uint => Bet) allBets;
+    mapping(uint => Fixture) public fixtures;
+    mapping(uint => Bet) public allBets;
 
     uint[] betIdList;
     uint[] fixtureIdList;
@@ -81,6 +80,10 @@ contract BetContract {
         return fixtures[fixtureId];
     }
 
+    function getFixtureCount() public view returns(uint){
+        return fixtureCounter;
+    }
+
     function getBet(uint betID) public view returns (Bet memory) { 
         return allBets[betID];
     }
@@ -112,7 +115,7 @@ contract BetContract {
 
         fixtures[fixtureID].bets.push(betCounter - 1);
         betIdList.push(betCounter - 1);
-        bets[betCounter - 1] = newBet;
+        allBets[betCounter - 1] = newBet;
     }
 
 
@@ -164,18 +167,6 @@ contract BetContract {
         locked = false; 
     }
 
-    receive() external payable {
-        //do nothing - function to receive ether.
-    }
-
-    fallback() external payable {
-        //do nothing
-    }
-
-    function getFixtureCount() public view returns(uint){
-        return fixtureCounter;
-    }
-
     function calculateLosersTotal(Fixture memory fixture) private view returns(uint) {
         uint loserSum = 0;
 
@@ -212,5 +203,13 @@ contract BetContract {
                 }
             }
         }
+    }
+
+    receive() external payable {
+        //do nothing - function to receive ether.
+    }
+
+    fallback() external payable {
+        //do nothing
     }
 }
