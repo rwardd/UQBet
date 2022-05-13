@@ -16,7 +16,7 @@ const AdminDashboard: FC = () => {
         </Link>
       </div>
       <br />
-      = <GetFixtures />
+      <GetFixtures />
       <GetBets />
       <h3>Set Winner (Transaction)</h3>
       <h3>Distribute Winnings (Transaction)</h3>
