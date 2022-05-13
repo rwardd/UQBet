@@ -1,5 +1,5 @@
-pragma solidity ^0.7.0;
-pragma experimental ABIEncoderV2;
+pragma solidity ^0.8.0;
+//pragma experimental ABIEncoderV2;
 
 import "hardhat/console.sol";
 
@@ -19,7 +19,7 @@ contract BetContract {
     struct Bet {
         uint betId;
         uint fixId;
-        address payable punter;
+        address punter; // we are going to assume that only EOA wallets can be punters
         string team;
         uint amount;
         bool won;
@@ -32,7 +32,7 @@ contract BetContract {
     bool locked;
     
     mapping(uint => Fixture) fixtures;
-    mapping(uint => Bet) bets;
+    mapping(uint => Bet) allBets;
 
     uint[] betIdList;
     uint[] fixtureIdList;
@@ -74,27 +74,43 @@ contract BetContract {
         return fixtureIdList;
     }
 
-    function getBets() public view returns (uint[] memory) { 
-        return betIdList;
+    /**
+     * Read only function to retrieve a fixture.
+     */
+    function getFixture(uint fixtureId) public view returns (Fixture memory) {
+        return fixtures[fixtureId];
+    }
+
+    function getBet(uint betID) public view returns (Bet memory) { 
+        return allBets[betID];
+    }
+
+    function getBetCounter() public view returns(uint) {
+        return betCounter;
     }
 
     /**
      * A function to place bets on a particular sport.
      */
-    function placeBet(Fixture memory fixture, string memory team, uint256 amount) public payable {
+    function placeBet(uint fixtureID, string memory team, uint256 amount) public payable {
         require(msg.sender != owner, "UQ Sports Administration cannot place bets");
         require(amount > 0, "Bet amount must be greater than 0");
         require(amount == msg.value, "Amount deposited does not equal message value");
-
-        Bet memory newBet = bets[betCounter++];
-        newBet.fixId = fixture.fixId;
-        newBet.betId = (betCounter - 1);
-        newBet.punter = msg.sender;
+        //TODO:
+        //Ensure you cant place a bet on a non-existent fixture
+        address a = msg.sender;
+        Bet memory newBet;
+        newBet.fixId = fixtureID;
+        newBet.betId = (betCounter);
+        newBet.punter = a;
         newBet.team = team;
         newBet.won = false;
         newBet.amount = amount;
 
-        fixtures[fixture.fixId].bets.push(betCounter - 1);
+        allBets[betCounter] = newBet;
+        betCounter++;
+
+        fixtures[fixtureID].bets.push(betCounter - 1);
         betIdList.push(betCounter - 1);
         bets[betCounter - 1] = newBet;
     }
@@ -118,10 +134,10 @@ contract BetContract {
         uint payout = 0;
         
         for (uint i = 0; i < fixture.bets.length; i++) {
-            if (bets[fixture.bets[i]].won == true) {
-                amountBet = bets[fixture.bets[i]].amount;
+            if (allBets[fixture.bets[i]].won == true) {
+                amountBet = allBets[fixture.bets[i]].amount;
                 payout = amountBet + ((amountBet/ winnersTotal) * losersTotal);
-                (bool success, ) = bets[fixture.bets[i]].punter.call{value: bets[fixture.bets[i]].amount}("");
+                (bool success, ) = allBets[fixture.bets[i]].punter.call{value: allBets[fixture.bets[i]].amount}("");
                 require(success, "Failed to payout punter"); 
             }
         }
@@ -141,19 +157,31 @@ contract BetContract {
 
         locked = true;   
         for (uint i = 0; i < fixture.bets.length; i++) {
-            (bool success, ) = bets[fixture.bets[i]].punter.call{value: bets[fixture.bets[i]].amount}("");
+            (bool success, ) = allBets[fixture.bets[i]].punter.call{value: allBets[fixture.bets[i]].amount}("");
             require(success, "Failed to payout punter"); 
         }
         fixtures[fixture.fixId].payedOut = true;
         locked = false; 
     }
 
+    receive() external payable {
+        //do nothing - function to receive ether.
+    }
+
+    fallback() external payable {
+        //do nothing
+    }
+
+    function getFixtureCount() public view returns(uint){
+        return fixtureCounter;
+    }
+
     function calculateLosersTotal(Fixture memory fixture) private view returns(uint) {
         uint loserSum = 0;
 
         for (uint i = 0; i < fixture.bets.length; i++) {
-            if (bets[fixture.bets[i]].won == false) {
-                loserSum += bets[fixture.bets[i]].amount;
+            if (allBets[fixture.bets[i]].won == false) {
+                loserSum += allBets[fixture.bets[i]].amount;
             }
         }
         return loserSum;
@@ -163,8 +191,8 @@ contract BetContract {
         uint winnerSum = 0;
 
         for (uint i = 0; i < fixture.bets.length; i++) {
-            if (bets[fixture.bets[i]].won == true) {
-                winnerSum += bets[fixture.bets[i]].amount;
+            if (allBets[fixture.bets[i]].won == true) {
+                winnerSum += allBets[fixture.bets[i]].amount;
             }
         }
         return winnerSum;
@@ -179,8 +207,8 @@ contract BetContract {
         } else {
             fixtures[fixture.fixId].active = false;
             for (uint i = 0; i < fixture.bets.length; i++) {
-                if (keccak256(abi.encodePacked((bets[fixture.bets[i]].team))) == keccak256(abi.encodePacked((winner)))) {
-                    bets[fixture.bets[i]].won = true;
+                if (keccak256(abi.encodePacked((allBets[fixture.bets[i]].team))) == keccak256(abi.encodePacked((winner)))) {
+                    allBets[fixture.bets[i]].won = true;
                 }
             }
         }

@@ -29,14 +29,13 @@ const UQBet: FC = () => {
     networkError,
     setSelectedAddress,
     setBalance,
+    setContract,
     resetState,
   } = useContext(GlobalState);
 
-  let _betContract: ethers.Contract;
-  const [_contractOwner, _setContractOwner] = useState();
-  // let _contractOwner: string = "no contract loaded";
   let _pollDataInterval: any;
   let _provider: Web3Provider;
+  const [_contractOwner, _setContractOwner] = useState();
 
   /**
    * Function defintions
@@ -59,13 +58,14 @@ const UQBet: FC = () => {
 
     // Then, we initialize the contract using that provider and the token's
     // artifact. You can do this same thing with your contracts.
-    _betContract = new ethers.Contract(
+    let contract = new ethers.Contract(
       contractAddress.Token,
       TokenArtifact.abi,
       _provider.getSigner(0)
     );
 
-    _setContractOwner((await _betContract.owner()).toLowerCase());
+    setContract(contract);
+    _setContractOwner((await contract.owner()).toLowerCase());
   }
 
   async function _updateEthBalance(userAddress: string) {
