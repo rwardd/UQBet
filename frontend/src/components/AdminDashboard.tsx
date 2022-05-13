@@ -1,7 +1,7 @@
+import { Button } from "grommet";
 import React, { FC } from "react";
 import { Link } from "react-router-dom";
 import { BOX, COLORS } from "../theme";
-import PurpleButton from "./PurpleButton";
 import AddFixture from "./transactionComponents/AddFixture";
 import GetBets from "./viewComponents/GetBets";
 import GetFixtures from "./viewComponents/GetFixtures";
@@ -12,7 +12,7 @@ const AdminDashboard: FC = () => {
       <div style={dashboardHeaderStyle}>
         <h2>You are the owner of this contract</h2>
         <Link to='/admin/AddFixture'>
-          <PurpleButton>Add Fixture</PurpleButton>
+          <Button primary label='Add Fixture' />
         </Link>
       </div>
       <br />

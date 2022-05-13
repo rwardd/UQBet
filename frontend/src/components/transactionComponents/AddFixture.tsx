@@ -1,8 +1,8 @@
 import React, { FC, useContext, useState } from "react";
 import { GlobalState } from "../../globalState";
 import { ERROR_CODE_TX_REJECTED_BY_USER } from "../../constants";
-import FormField from "../forms/FormField";
-import PurpleButton from "../PurpleButton";
+// import FormField from "../forms/FormField";
+import { Box, Button, DateInput, Form, FormField, TextInput} from "grommet";
 
 const AddFixture: FC = () => {
   const { setTransactionError, bettingContract, setTxBeingSet } =
@@ -37,7 +37,6 @@ const AddFixture: FC = () => {
       if (!bettingContract) {
         throw new Error("Betting Contract not available");
       }
-      console.log(bettingContract.address);
       const tx = await bettingContract.addFixture(home, away, date);
       setTxBeingSet(tx.hash);
       // We use .wait() to wait for the transaction to be mined. This method
@@ -100,41 +99,41 @@ const AddFixture: FC = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit} style={formStyle}>
-        <FormField
-          fieldName='Home team'
-          type='text'
-          value={homeTeam}
-          onChange={(e) => setHomeTeam(e.target.value)}
-        />
-        <FormField
-          fieldName='Away team'
-          type='text'
-          value={awayTeam}
-          onChange={(e) => setAwayTeam(e.target.value)}
-        />
-        <FormField
-          fieldName='Date'
-          type='date'
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-        />
-        <PurpleButton
-          style={{ marginTop: "15px" }}
-          disabled={isFormEmpty() || status === "submitting"}
-        >
-          Submit
-        </PurpleButton>
+      <Form onSubmit={handleSubmit} onReset={resetForm}>
+        <FormField label='Home team' type='text'>
+          <TextInput
+            placeholder='Home team'
+            value={homeTeam}
+            onChange={(e) => setHomeTeam(e.target.value)}
+          />
+        </FormField>
+        <FormField label='Away team' type='text'>
+          <TextInput
+            placeholder='Away team'
+            value={awayTeam}
+            onChange={(e) => setAwayTeam(e.target.value)}
+          />
+        </FormField>
+        <FormField label='Date' type='date'>
+          <DateInput
+            format='mm/dd/yyyy'
+            value={date}
+            onChange={({ value }) => setDate(value.toString())}
+          />
+        </FormField>
+        <Box direction='row' gap='medium' margin={{ top: "medium" }}>
+          <Button
+            type='submit'
+            primary
+            label='Submit'
+            disabled={isFormEmpty() || status === "submitting"}
+          />
+          <Button type='reset' label='Reset' />
+        </Box>
         {error !== null && <p className='Error'>{error.message}</p>}
-      </form>
+      </Form>
     </>
   );
-};
-
-const formStyle: React.CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "space-between",
 };
 
 export default AddFixture;
