@@ -14,13 +14,13 @@ import contractAddress from "../contracts/contract-address.json";
 // All the logic of this dapp is contained in the Dapp component.
 // These other components are just presentational ones: they don't have any
 // logic. They just render HTML.
-import { NoWalletDetected } from "./NoWalletDetected";
-import { ConnectWallet } from "./ConnectWallet";
-import { Loading } from "./Loading";
+import { NoWalletDetected } from "./utils/NoWalletDetected";
+import { ConnectWallet } from "./utils/ConnectWallet";
+import { Loading } from "./utils/Loading";
 import { Transfer } from "./Transfer";
-import { TransactionErrorMessage } from "./TransactionErrorMessage";
-import { WaitingForTransactionMessage } from "./WaitingForTransactionMessage";
-import { NoTokensMessage } from "./NoTokensMessage";
+import { TransactionErrorMessage } from "./utils/TransactionErrorMessage";
+import { WaitingForTransactionMessage } from "./utils/WaitingForTransactionMessage";
+import { NoTokensMessage } from "./utils/NoTokensMessage";
 
 // This is the Hardhat Network id, you might change it in the hardhat.config.js.
 // If you are using MetaMask, be sure to change the Network id to 1337.

@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 import React, { ReactNode, useState } from "react";
 
 // This is our global state
@@ -20,6 +21,9 @@ export interface IGlobalState {
   // Any network error
   networkError: any;
   setNetworkError: any;
+  // The betting Contract
+  bettingContract: ethers.Contract | undefined;
+  setContract: any;
   // Function to reset state
   resetState: () => void;
 }
@@ -38,6 +42,7 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = (
   const [txBeingSent, setTxBeingSet] = useState(undefined);
   const [transactionError, setTransactionError] = useState(undefined);
   const [networkError, setNetworkError] = useState(undefined);
+  const [bettingContract, setContract] = useState(undefined);
 
   function resetState() {
     setSelectedAddress(undefined);
@@ -45,6 +50,7 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = (
     setTxBeingSet(undefined);
     setTransactionError(undefined);
     setNetworkError(undefined);
+    setContract(undefined);
   }
 
   const initialState: IGlobalState = {
@@ -58,6 +64,8 @@ export const GlobalStateProvider: React.FC<GlobalStateProviderProps> = (
     setTransactionError,
     networkError,
     setNetworkError,
+    bettingContract,
+    setContract,
     resetState,
   };
 

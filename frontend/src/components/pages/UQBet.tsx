@@ -1,20 +1,20 @@
 import React, { FC, useContext, useState } from "react";
-import { GlobalState } from "../globalState";
-import { COLORS } from "../theme";
-import { ConnectWallet } from "./ConnectWallet";
-import Header from "./Header";
-import { NoWalletDetected } from "./NoWalletDetected";
+import { GlobalState } from "../../globalState";
+import { COLORS } from "../../theme";
+import { ConnectWallet } from "../utils/ConnectWallet";
+import Header from "../Header";
+import { NoWalletDetected } from "../utils/NoWalletDetected";
 
 // We'll use ethers to interact with the Ethereum network and our contract
 import { ethers } from "ethers";
 
 // We import the contract's artifacts and address here, as we are going to be
 // using them with ethers
-import TokenArtifact from "../contracts/BetContract.json";
-import contractAddress from "../contracts/contract-address.json";
-import BetSlip from "./BetSlip";
+import TokenArtifact from "../../contracts/BetContract.json";
+import contractAddress from "../../contracts/contract-address.json";
+import BetSlip from "../BetSlip";
 import { Web3Provider } from "@ethersproject/providers";
-import AdminDashboard from "./AdminDashboard";
+import AdminDashboard from "../AdminDashboard";
 
 // This is the Hardhat Network id, you might change it in the hardhat.config.js.
 // If you are using MetaMask, be sure to change the Network id to 1337.
@@ -29,14 +29,13 @@ const UQBet: FC = () => {
     networkError,
     setSelectedAddress,
     setBalance,
+    setContract,
     resetState,
   } = useContext(GlobalState);
 
-  let _betContract: ethers.Contract;
-  const [_contractOwner, _setContractOwner] = useState();
-  // let _contractOwner: string = "no contract loaded";
   let _pollDataInterval: any;
   let _provider: Web3Provider;
+  const [_contractOwner, _setContractOwner] = useState();
 
   /**
    * Function defintions
@@ -59,13 +58,14 @@ const UQBet: FC = () => {
 
     // Then, we initialize the contract using that provider and the token's
     // artifact. You can do this same thing with your contracts.
-    _betContract = new ethers.Contract(
+    let contract = new ethers.Contract(
       contractAddress.Token,
       TokenArtifact.abi,
       _provider.getSigner(0)
     );
 
-    _setContractOwner((await _betContract.owner()).toLowerCase());
+    setContract(contract);
+    _setContractOwner((await contract.owner()).toLowerCase());
   }
 
   async function _updateEthBalance(userAddress: string) {

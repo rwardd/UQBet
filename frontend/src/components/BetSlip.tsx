@@ -1,21 +1,78 @@
-import React, { FC } from "react";
+import React, { FC, useContext, useState } from "react";
 import { COLORS, BOX } from "../theme";
+import { GlobalState } from "../globalState";
+import { ethers } from "ethers";
+import GetFixtures from "./viewComponents/GetFixtures";
+import { Fixture } from "../types";
+import GetBets from "./viewComponents/GetBets";
+import { Box, Heading } from "grommet";
 
 const BetSlip: FC = () => {
+  const { bettingContract } = useContext(GlobalState);
+
+  const [homeTeamBet, setHomeTeamBet] = useState(0);
+  const [awayTeamBet, setAwayTeamBet] = useState(0);
+  const [selectedFixture, setSelectedFixture] = useState<null | Fixture>(null);
+
+  async function submitHomeTeamBet(event: any) {
+    event.preventDefault();
+    if (!bettingContract) {
+      throw new Error("Betting Contract not available");
+    } else {
+      await bettingContract.placeBet(
+        selectedFixture?.fixId,
+        selectedFixture?.home,
+        ethers.utils.parseEther(homeTeamBet.toString()),
+        { value: ethers.utils.parseEther(homeTeamBet.toString()) }
+      );
+    }
+  }
+
+  async function submitAwayTeamBet(event: any) {
+    event.preventDefault();
+    if (!bettingContract) {
+      throw new Error("Betting Contract not available");
+    } else {
+      await bettingContract.placeBet(
+        selectedFixture?.fixId,
+        selectedFixture?.away,
+        ethers.utils.parseEther(awayTeamBet.toString()),
+        { value: ethers.utils.parseEther(awayTeamBet.toString()) }
+      );
+    }
+  }
+
   return (
     <div style={betSlipStyling}>
-      <h2>BetSlip (this does nothing atm)</h2>
-      <h3>Team A</h3>
-      <h3>Total Amount: x ETH</h3>
-      <h5>Enter an amount to bid:</h5>
-      <input></input>
-      <input type='submit' />
+      <h1 style={{ textAlign: "center", fontSize: "50px" }}>Place a bet</h1>
+      <GetFixtures getSelectOption setSelectedFixture={setSelectedFixture} />
+      <h3>Home Team: {selectedFixture && selectedFixture.home}</h3>
+      {/* <h3>Total Amount: x ETH</h3> */}
+      <form onSubmit={submitHomeTeamBet}>
+        <label>
+          Enter an amount to bid:
+          <input
+            type='number'
+            value={homeTeamBet}
+            onChange={(e) => setHomeTeamBet(parseInt(e.target.value))}
+          />
+          <button>Submit</button>
+        </label>
+      </form>
       <br />
-      <h3>Team B</h3>
-      <h3>Total Amount: x ETH</h3>
-      <h5>Enter an amount to bid:</h5>
-      <input></input>
-      <input type='submit' />
+      <h3>Away Team: {selectedFixture && selectedFixture.away}</h3>
+      <form onSubmit={submitAwayTeamBet}>
+        <label>
+          Enter an amount to bid:
+          <input
+            type='number'
+            value={awayTeamBet}
+            onChange={(e) => setAwayTeamBet(parseInt(e.target.value))}
+          />
+          <button>Submit</button>
+        </label>
+      </form>
+      <GetBets />
     </div>
   );
 };
