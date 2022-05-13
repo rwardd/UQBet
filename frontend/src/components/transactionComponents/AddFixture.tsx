@@ -1,6 +1,8 @@
 import React, { FC, useContext, useState } from "react";
 import { GlobalState } from "../../globalState";
 import { ERROR_CODE_TX_REJECTED_BY_USER } from "../../constants";
+import FormField from "../forms/FormField";
+import PurpleButton from "../PurpleButton";
 
 const AddFixture: FC = () => {
   const { setTransactionError, bettingContract, setTxBeingSet } =
@@ -35,7 +37,7 @@ const AddFixture: FC = () => {
       if (!bettingContract) {
         throw new Error("Betting Contract not available");
       }
-      console.log(bettingContract.address)
+      console.log(bettingContract.address);
       const tx = await bettingContract.addFixture(home, away, date);
       setTxBeingSet(tx.hash);
       // We use .wait() to wait for the transaction to be mined. This method
@@ -98,39 +100,41 @@ const AddFixture: FC = () => {
 
   return (
     <>
-      <h3>Add fixture</h3>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Home team
-          <input
-            type='text'
-            value={homeTeam}
-            onChange={(e) => setHomeTeam(e.target.value)}
-          />
-        </label>
-        <label>
-          Away team
-          <input
-            type='text'
-            value={awayTeam}
-            onChange={(e) => setAwayTeam(e.target.value)}
-          />
-        </label>
-        <label>
-          Date
-          <input
-            type='text'
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-        </label>
-        <button disabled={isFormEmpty() || status === "submitting"}>
+      <form onSubmit={handleSubmit} style={formStyle}>
+        <FormField
+          fieldName='Home team'
+          type='text'
+          value={homeTeam}
+          onChange={(e) => setHomeTeam(e.target.value)}
+        />
+        <FormField
+          fieldName='Away team'
+          type='text'
+          value={awayTeam}
+          onChange={(e) => setAwayTeam(e.target.value)}
+        />
+        <FormField
+          fieldName='Date'
+          type='date'
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
+        <PurpleButton
+          style={{ marginTop: "15px" }}
+          disabled={isFormEmpty() || status === "submitting"}
+        >
           Submit
-        </button>
+        </PurpleButton>
         {error !== null && <p className='Error'>{error.message}</p>}
       </form>
     </>
   );
+};
+
+const formStyle: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
 };
 
 export default AddFixture;

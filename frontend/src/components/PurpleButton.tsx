@@ -4,13 +4,19 @@ import { BOX, COLORS, FONT_SIZE } from "../theme";
 interface ButtonProp {
   children?: string;
   onClick?: () => any;
+  disabled?: boolean;
+  style?: React.CSSProperties;
 }
 
 const PurpleButton: FC<ButtonProp> = (props) => {
-  const { children, onClick } = props;
+  const { children, onClick, disabled, style } = props;
 
   return (
-    <button style={buttonStyle} onClick={onClick}>
+    <button
+      style={{ ...buttonStyle, ...style }}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {children}
     </button>
   );

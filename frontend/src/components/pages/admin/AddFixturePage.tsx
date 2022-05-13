@@ -10,6 +10,9 @@ const AddFixturePage: FC = () => {
     <>
       <Header />
       <div style={adminDashboardStyle}>
+        <h2 style={{ textAlign: "center", marginBottom: "30px" }}>
+          Add fixture
+        </h2>
         <AddFixture />
       </div>
     </>
@@ -24,5 +27,7 @@ const adminDashboardStyle: React.CSSProperties = {
   width: "75%",
   margin: "auto",
 };
+
+
 
 export default AddFixturePage;

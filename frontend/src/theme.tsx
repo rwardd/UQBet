@@ -5,6 +5,7 @@ export const COLORS = {
 
 export const FONT_SIZE = {
   title: 70,
+  four: 18,
 };
 
 export const BOX = {
