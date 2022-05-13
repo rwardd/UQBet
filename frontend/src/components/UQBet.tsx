@@ -1,9 +1,9 @@
 import React, { FC, useContext, useState } from "react";
 import { GlobalState } from "../globalState";
 import { COLORS } from "../theme";
-import { ConnectWallet } from "./ConnectWallet";
+import { ConnectWallet } from "./utils/ConnectWallet";
 import Header from "./Header";
-import { NoWalletDetected } from "./NoWalletDetected";
+import { NoWalletDetected } from "./utils/NoWalletDetected";
 
 // We'll use ethers to interact with the Ethereum network and our contract
 import { ethers } from "ethers";

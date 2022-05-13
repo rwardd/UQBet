@@ -1,6 +1,6 @@
 import React, { FC, useContext, useState } from "react";
 import { GlobalState } from "../../globalState";
-import { ERROR_CODE_TX_REJECTED_BY_USER } from "../../utils";
+import { ERROR_CODE_TX_REJECTED_BY_USER } from "../../constants";
 
 const AddFixture: FC = () => {
   const { setTransactionError, bettingContract, setTxBeingSet } =
