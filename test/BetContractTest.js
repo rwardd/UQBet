@@ -85,4 +85,20 @@ describe("BetContract contract", function () {
         });
     });
 
+    describe("Bet", function () {
+
+    });
+
+    describe("Set Winner", function () {
+
+    });
+
+    describe("Payout", function () {
+
+    });
+
+    describe("Refund", function () {
+
+    });
+
 });
