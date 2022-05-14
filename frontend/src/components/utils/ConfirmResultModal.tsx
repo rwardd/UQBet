@@ -43,6 +43,7 @@ const ConfirmResultModal: FC<ConfirmResultModalProps> = (props) => {
           style={modalStyling}
           position='top'
           margin='none'
+          animation='fadeIn'
         >
           <h3 style={titleStyling}>{`Confirm result`}</h3>
           {fixtureDetails()}
