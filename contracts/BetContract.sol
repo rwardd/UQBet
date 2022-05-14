@@ -32,6 +32,7 @@ contract BetContract {
     
     mapping(uint => Fixture) fixtures;
     mapping(uint => Bet) allBets;
+    mapping(address => uint[]) userBets;
 
     uint[] betIdList;
     uint[] fixtureIdList;
@@ -93,6 +94,10 @@ contract BetContract {
         return betCounter;
     }
 
+    function getUserBets() public view returns(uint[] memory) {
+        return userBets[msg.sender];
+    }
+
     /**
      * A function to place bets on a particular sport.
      */
@@ -112,11 +117,15 @@ contract BetContract {
         newBet.amount = amount;
 
         allBets[betCounter] = newBet;
-        betCounter++;
 
-        fixtures[fixtureID].bets.push(betCounter - 1);
-        betIdList.push(betCounter - 1);
-        allBets[betCounter - 1] = newBet;
+        // Add to user bets
+        userBets[msg.sender].push(betCounter);
+
+        fixtures[fixtureID].bets.push(betCounter);
+        betIdList.push(betCounter);
+        allBets[betCounter] = newBet;
+
+        betCounter++;
     }
 
     function retrieveFunds(uint betId) public payable {

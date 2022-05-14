@@ -1,53 +1,95 @@
-import React, { FC, useContext, useState } from "react";
+import { ethers } from "ethers";
+import {
+  Heading,
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "grommet";
+import React, { FC, useContext, useEffect, useState, useRef } from "react";
 import { GlobalState } from "../../globalState";
+import { Bet } from "../../types";
 
-const GetBets: FC = () => {
-  const [bets, setBets] = useState(null);
+const GetBets: FC = (props) => {
   const { bettingContract } = useContext(GlobalState);
+  const [userBets, setUserBets] = useState<any[]>([]);
+  const hasFetchedData = useRef(false);
 
-  async function _getBets() {
-    if (!bettingContract) {
-      throw new Error("Betting Contract not available");
-    } else {
-      let betList: any[] = [];
-      const betCount = await bettingContract.getBetCounter();
+  useEffect(() => {
+    async function _getUserBets() {
+      if (!bettingContract) {
+        throw new Error("Betting Contract not available");
+      } else {
+        let userBets = [];
+        const userBetIds = await bettingContract.getUserBets();
 
-      console.log(betCount);
-      for (let i = 0; i < betCount; i++) {
-        betList.push(await bettingContract.getBet(i));
+        for (let i = 0; i < userBetIds.length; i++) {
+          userBets.push(await bettingContract.getBet(userBetIds[i]));
+        }
+
+        setUserBets(userBets);
       }
-      return betList;
     }
-  }
 
-  function renderBetHeader() {
-    const header = ["Bet ID", "Amount", "FixtureID", "Team", "PunterID"];
-    return header.map((key, index) => {
-      return <th key={index}>{key.toUpperCase()}</th>;
+    if (!hasFetchedData.current) {
+      // Fetch Data
+      _getUserBets();
+      hasFetchedData.current = true;
+    }
+  });
+
+  function tableData() {
+    const betData = userBets.map((bet: Bet) => {
+      const { betId, team, amount, won } = bet;
+      const formattedAmount = ethers.utils.formatEther(amount);
+      return (
+        <TableRow key={betId.toString()}>
+          <TableCell>{team}</TableCell>
+          <TableCell>{formattedAmount}</TableCell>
+          <TableCell>{won.toString()}</TableCell>
+        </TableRow>
+      );
     });
+
+    return <TableBody>{betData}</TableBody>;
   }
 
-  function renderBetData() {
-    console.log(bets);
+  function tableHeader() {
+    let columns = ["Team", "Amount", "Won"];
+
+    const tableCells = columns.map((columnTitle) => {
+      return (
+        <TableCell scope='col' border='bottom' key={columnTitle}>
+          {columnTitle}
+        </TableCell>
+      );
+    });
+
+    return (
+      <TableHeader>
+        <TableRow>{tableCells}</TableRow>
+      </TableHeader>
+    );
+  }
+
+  function table() {
+    return (
+      <Table>
+        {tableHeader()}
+        {tableData()}
+      </Table>
+    );
   }
 
   return (
-    <div>
-      <h3>Get Bets</h3>
-      <table style={fixtureStyle}>
-        <tbody style={innerFixtureStyle}>
-          <tr>{renderBetHeader()}</tr>
-        </tbody>
-      </table>
+    <div style={{ marginBottom: "15px" }}>
+      <Heading margin={{ bottom: "small" }} level='2'>
+        Bets
+      </Heading>
+      {userBets.length === 0 ? "You haven't placed any bets" : table()}
     </div>
   );
-};
-
-const fixtureStyle: React.CSSProperties = {
-  border: "solid black",
-};
-const innerFixtureStyle: React.CSSProperties = {
-  border: "solid black",
 };
 
 export default GetBets;

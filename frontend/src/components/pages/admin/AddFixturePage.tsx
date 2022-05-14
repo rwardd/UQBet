@@ -8,7 +8,7 @@ const AddFixturePage: FC = () => {
 
   return (
     <>
-      <Header />
+      <Header admin />
       <div style={adminDashboardStyle}>
         <h2 style={{ textAlign: "center", marginBottom: "30px" }}>
           Add fixture

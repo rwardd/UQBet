@@ -1,10 +1,19 @@
+import { Button } from "grommet";
+import { Header as GrommetHeader } from "grommet";
 import React, { FC, useContext } from "react";
 import { GlobalState } from "../globalState";
 import { COLORS, FONT_SIZE } from "../theme";
+import { AdminMenu, UQBetMenu } from "./Menu";
 import { Loading } from "./utils/Loading";
 
-const Header: FC = () => {
+interface HeaderProps {
+  admin?: boolean;
+}
+
+const Header: FC<HeaderProps> = (props) => {
   const { balance, selectedAddress } = useContext(GlobalState);
+  const { admin } = props;
+
   const logo = (
     <h1
       style={{
@@ -30,7 +39,10 @@ const Header: FC = () => {
 
   return (
     <div style={headerStyling}>
-      {logo}
+      <GrommetHeader background='brand'>
+        <Button icon={logo} hoverIndicator />
+        {admin ? AdminMenu() : UQBetMenu()}
+      </GrommetHeader>
       {accountDisplay()}
     </div>
   );
@@ -42,8 +54,7 @@ const headerStyling: React.CSSProperties = {
   justifyContent: "space-between",
   alignItems: "center",
   color: COLORS.white,
-  padding: "15px",
-  marginBottom: "20px",
+  marginBottom: "15px",
 };
 
 const accountDisplayStyling: React.CSSProperties = {
@@ -51,7 +62,6 @@ const accountDisplayStyling: React.CSSProperties = {
   display: "flex",
   flexDirection: "column",
   alignItems: "flex-end",
-  alignSelf: "flex-end",
 };
 
 export default Header;
