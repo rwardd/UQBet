@@ -10,13 +10,17 @@ describe("BetContract contract", function () {
     let owner;
     let addr1;
     let addr2;
+    let addr3;
+    let addr4;
+    let addr5;
+    let addr6;
     let addrs;
     let prov = waffle.provider;
 
     beforeEach(async function () {
         // Get the ContractFactory and Signers here.
         undeployed = await ethers.getContractFactory("BetContract");
-        [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
+        [owner, addr1, addr2, addr3, addr4, addr5, addr6, ...addrs] = await ethers.getSigners();
     
         // To deploy our contract, we just have to call Token.deploy() and await
         // for it to be deployed(), which happens onces its transaction has been
@@ -123,9 +127,65 @@ describe("BetContract contract", function () {
 
     describe("Set Winner", function () {
 
+        it("Should not be able to set winners as non-owner", async function() {
+            await betContract.addFixture("Red Sox","White Sox", "14 May 22");
+            await expect(betContract.connect(addr1).setWinner(0, "Red Sox", false)).to.be.revertedWith("Only UQ Sports Administration can set the winner");
+        });
+
+        it("Owner should be able to set winner of valid game, bets should reflect won", async function() {
+            await betContract.addFixture("Red Sox","White Sox", "14 May 22");
+            await betContract.connect(addr1).placeBet(0, "Red Sox", 50, {value: 50});
+            await betContract.connect(addr2).placeBet(0, "White Sox", 50, {value: 50});
+            await betContract.setWinner(0, "Red Sox", false);
+            expect((await betContract.getBet(0)).won).to.equal(true);
+            expect((await betContract.getBet(1)).won).to.equal(false);
+        });
+
+        it("Owner should be able to set invalid game, bets should all reflect won", async function() {
+            await betContract.addFixture("Red Sox","White Sox", "14 May 22");
+            await betContract.connect(addr1).placeBet(0, "Red Sox", 50, {value: 50});
+            await betContract.connect(addr2).placeBet(0, "White Sox", 50, {value: 50});
+            await betContract.setWinner(0, "Red Sox", true);
+            expect((await betContract.getBet(0)).won).to.equal(true);
+            expect((await betContract.getBet(1)).won).to.equal(true);
+        });
+
     });
 
     describe("Payout", function () {
 
+        it("Should allow users to withdraw winnings", async function() {
+            await betContract.addFixture("Red Sox","White Sox", "14 May 22");
+            await betContract.addFixture("Angels","Dodgers", "15 May 22");
+            await betContract.connect(addr5).placeBet(1, "Angels", 1000000000000000000n, {value: 1000000000000000000n});
+            console.log("Before Bet: ", await prov.getBalance(betContract.address));
+            await betContract.connect(addr1).placeBet(0, "Red Sox", 50, {value: 50});
+            await betContract.connect(addr2).placeBet(0, "Red Sox", 100, {value: 100});
+            await betContract.connect(addr3).placeBet(0, "White Sox", 500, {value: 500});
+            await betContract.connect(addr4).placeBet(0, "White Sox", 500, {value: 500});
+            console.log("After Bet: ", await prov.getBalance(betContract.address));
+            await betContract.setWinner(0, "Red Sox", false);
+            await betContract.connect(addr1).retrieveFunds(1);
+            await betContract.connect(addr2).retrieveFunds(2);
+            console.log("After Payout: ", await prov.getBalance(betContract.address));
+        });
+
+        it("Should allow users to withdraw bet on invalid match", async function() {
+            await betContract.addFixture("Red Sox","White Sox", "14 May 22");
+            await betContract.addFixture("Angels","Dodgers", "15 May 22");
+            await betContract.connect(addr5).placeBet(1, "Angels", 1000000000000000000n, {value: 1000000000000000000n});
+            console.log("Before Bet: ", await prov.getBalance(betContract.address));
+            await betContract.connect(addr1).placeBet(0, "Red Sox", 50, {value: 50});
+            await betContract.connect(addr2).placeBet(0, "Red Sox", 100, {value: 100});
+            await betContract.connect(addr3).placeBet(0, "White Sox", 500, {value: 500});
+            await betContract.connect(addr4).placeBet(0, "White Sox", 500, {value: 500});
+            console.log("After Bet: ", await prov.getBalance(betContract.address));
+            await betContract.setWinner(0, "Red Sox", true);
+            await betContract.connect(addr1).retrieveFunds(1);
+            await betContract.connect(addr2).retrieveFunds(2);
+            await betContract.connect(addr3).retrieveFunds(3);
+            await betContract.connect(addr4).retrieveFunds(4);
+            console.log("After Payout: ", await prov.getBalance(betContract.address));
+        });
     });
 });
