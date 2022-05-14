@@ -10,14 +10,16 @@ import {
 import React, { FC, useContext, useEffect, useState, useRef } from "react";
 import { GlobalState } from "../../globalState";
 import { Fixture } from "../../types";
+import FixtureControls from "../AdminFixtureControls";
 
 interface GetFixturesProps {
   getSelectOption?: boolean;
+  admin?: boolean;
   setSelectedFixture?: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const GetFixtures: FC<GetFixturesProps> = (props) => {
-  const { getSelectOption, setSelectedFixture } = props;
+  const { getSelectOption, setSelectedFixture, admin } = props;
   const { bettingContract } = useContext(GlobalState);
   const [fixtures, setFixtures] = useState<any[]>([]);
   const hasFetchedData = useRef(false);
@@ -65,6 +67,11 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
               }
             </TableCell>
           )}
+          {admin && (
+            <TableCell>
+              <FixtureControls fixture={fixture} />
+            </TableCell>
+          )}
         </TableRow>
       );
     });
@@ -76,6 +83,9 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
     let columns = ["Home", "Away", "Date"];
     if (getSelectOption) {
       columns.push("Select");
+    }
+    if (admin) {
+      columns.push("Controls");
     }
 
     const tableCells = columns.map((columnTitle) => {
