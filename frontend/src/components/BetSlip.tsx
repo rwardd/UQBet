@@ -4,8 +4,6 @@ import { GlobalState } from "../globalState";
 import { ethers } from "ethers";
 import GetFixtures from "./viewComponents/GetFixtures";
 import { Fixture } from "../types";
-import GetBets from "./viewComponents/GetBets";
-import { Box, Heading } from "grommet";
 
 const BetSlip: FC = () => {
   const { bettingContract } = useContext(GlobalState);
@@ -72,7 +70,6 @@ const BetSlip: FC = () => {
           <button>Submit</button>
         </label>
       </form>
-      <GetBets />
     </div>
   );
 };

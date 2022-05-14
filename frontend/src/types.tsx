@@ -1,3 +1,4 @@
+import { Web3Provider } from "@ethersproject/providers";
 import { BigNumber } from "ethers";
 
 export type Fixture = {
@@ -9,4 +10,14 @@ export type Fixture = {
   payedOut: boolean;
   invalidated: boolean;
   bets: any[];
+};
+
+export type Bet = {
+  betId: BigNumber;
+  fixId: BigNumber;
+  punter: string;
+  team: string;
+  amount: BigNumber;
+  won: boolean;
+  payedOut: boolean;
 };

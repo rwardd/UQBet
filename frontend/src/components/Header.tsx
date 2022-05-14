@@ -3,7 +3,7 @@ import { Header as GrommetHeader } from "grommet";
 import React, { FC, useContext } from "react";
 import { GlobalState } from "../globalState";
 import { COLORS, FONT_SIZE } from "../theme";
-import { UQBetNavigation } from "./Navigation";
+import { UQBetMenu } from "./Menu";
 import { Loading } from "./utils/Loading";
 
 const Header: FC = () => {
@@ -35,7 +35,7 @@ const Header: FC = () => {
     <div style={headerStyling}>
       <GrommetHeader background='brand'>
         <Button icon={logo} hoverIndicator />
-        {UQBetNavigation()}
+        {UQBetMenu()}
       </GrommetHeader>
       {accountDisplay()}
     </div>

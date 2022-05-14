@@ -1,8 +1,9 @@
 import { Menu } from "grommet";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { COLORS } from "../theme";
 
-export const UQBetNavigation = () => {
+export const UQBetMenu = () => {
   let navigate = useNavigate();
   const items = [
     {
@@ -18,5 +19,5 @@ export const UQBetNavigation = () => {
       },
     },
   ];
-  return <Menu label={"Menu"} items={items} />;
+  return <Menu label={"Menu"} color={COLORS.white} items={items} />;
 };
