@@ -40,9 +40,9 @@ const ConfirmResultModal: FC<ConfirmResultModalProps> = (props) => {
         <Layer
           onEsc={() => setShow(false)}
           onClickOutside={() => setShow(false)}
-          style={{ padding: BOX.padding }}
+          style={modalStyling}
           position='top'
-          margin='xlarge'
+          margin='none'
         >
           <h3 style={titleStyling}>{`Confirm result`}</h3>
           {fixtureDetails()}
@@ -72,6 +72,12 @@ const ConfirmResultModal: FC<ConfirmResultModalProps> = (props) => {
 const titleStyling: React.CSSProperties = {
   color: COLORS.purple,
   marginBottom: "20px",
+};
+
+const modalStyling: React.CSSProperties = {
+  padding: BOX.padding,
+  borderRadius: BOX.borderRadius,
+  marginTop: "10%",
 };
 
 export default ConfirmResultModal;
