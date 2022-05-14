@@ -1,7 +1,6 @@
 import React, { FC, useContext, useState } from "react";
 import { GlobalState } from "../../globalState";
 import { ERROR_CODE_TX_REJECTED_BY_USER } from "../../constants";
-// import FormField from "../forms/FormField";
 import { Box, Button, DateInput, Form, FormField, TextInput} from "grommet";
 
 const AddFixture: FC = () => {

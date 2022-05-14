@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Dapp } from "./components/DeprecatedDapp";
-import UQBet from "./components/UQBet";
+import UQBet from "./components/pages/UQBet";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 // We import bootstrap here, but you can remove if you want

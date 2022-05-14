@@ -176,22 +176,24 @@ contract BetContract {
         return winnerSum;
     }
 
-    function setWinner(uint fixtureId, string memory winner, bool invalidated) public {
+    function setWinner(uint fixtureId, string memory winner) public {
         require(msg.sender == owner, "Only UQ Sports Administration can set the winner");
 
-        if (invalidated) {
-            fixtures[fixtureId].invalidated = true;
-            fixtures[fixtureId].active = false;
-            for (uint i = 0; i < fixtures[fixtureId].bets.length; i++) {
-                    allBets[fixtures[fixtureId].bets[i]].won = true;
+        fixtures[fixtureId].active = false;
+        for (uint i = 0; i < fixtures[fixtureId].bets.length; i++) {
+            if (keccak256(abi.encodePacked((allBets[fixtures[fixtureId].bets[i]].team))) == keccak256(abi.encodePacked((winner)))) {
+                allBets[fixtures[fixtureId].bets[i]].won = true;
             }
-        } else {
-            fixtures[fixtureId].active = false;
-            for (uint i = 0; i < fixtures[fixtureId].bets.length; i++) {
-                if (keccak256(abi.encodePacked((allBets[fixtures[fixtureId].bets[i]].team))) == keccak256(abi.encodePacked((winner)))) {
-                    allBets[fixtures[fixtureId].bets[i]].won = true;
-                }
-            }
+        }
+    }
+
+    function setInvalidated(uint fixtureId) public {
+        require(msg.sender == owner, "Only UQ Sports Administration can set the winner");
+
+        fixtures[fixtureId].invalidated = true;
+        fixtures[fixtureId].active = false;
+        for (uint i = 0; i < fixtures[fixtureId].bets.length; i++) {
+                allBets[fixtures[fixtureId].bets[i]].won = true;
         }
     }
 

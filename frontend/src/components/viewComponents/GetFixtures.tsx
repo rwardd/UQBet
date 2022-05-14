@@ -10,34 +10,36 @@ import {
 import React, { FC, useContext, useEffect, useState, useRef } from "react";
 import { GlobalState } from "../../globalState";
 import { Fixture } from "../../types";
+import FixtureControls from "../AdminFixtureControls";
 
 interface GetFixturesProps {
   getSelectOption?: boolean;
+  admin?: boolean;
   setSelectedFixture?: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const GetFixtures: FC<GetFixturesProps> = (props) => {
-  const { getSelectOption, setSelectedFixture } = props;
+  const { getSelectOption, setSelectedFixture, admin } = props;
   const { bettingContract } = useContext(GlobalState);
   const [fixtures, setFixtures] = useState<any[]>([]);
   const hasFetchedData = useRef(false);
 
-  useEffect(() => {
-    async function _getFixtures() {
-      if (!bettingContract) {
-        throw new Error("Betting Contract not available");
-      } else {
-        let fixtureList = [];
-        const fixtureCount = await bettingContract.getFixtureCount();
+  async function _getFixtures() {
+    if (!bettingContract) {
+      throw new Error("Betting Contract not available");
+    } else {
+      let fixtureList = [];
+      const fixtureCount = await bettingContract.getFixtureCount();
 
-        for (let i = 0; i < fixtureCount; i++) {
-          fixtureList.push(await bettingContract.getFixture(i));
-        }
-
-        setFixtures(fixtureList);
+      for (let i = 0; i < fixtureCount; i++) {
+        fixtureList.push(await bettingContract.getFixture(i));
       }
-    }
 
+      setFixtures(fixtureList);
+    }
+  }
+
+  useEffect(() => {
     if (!hasFetchedData.current) {
       // Fetch Data
       _getFixtures();
@@ -65,6 +67,14 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
               }
             </TableCell>
           )}
+          {admin && (
+            <TableCell>
+              <FixtureControls
+                fixture={fixture}
+                refreshFixtureData={_getFixtures}
+              />
+            </TableCell>
+          )}
         </TableRow>
       );
     });
@@ -76,6 +86,9 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
     let columns = ["Home", "Away", "Date"];
     if (getSelectOption) {
       columns.push("Select");
+    }
+    if (admin) {
+      columns.push("Controls");
     }
 
     const tableCells = columns.map((columnTitle) => {

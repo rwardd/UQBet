@@ -2,23 +2,19 @@ import { Button } from "grommet";
 import React, { FC } from "react";
 import { Link } from "react-router-dom";
 import { BOX, COLORS } from "../theme";
-import GetBets from "./viewComponents/GetBets";
 import GetFixtures from "./viewComponents/GetFixtures";
 
 const AdminDashboard: FC = () => {
   return (
     <div style={adminDashboardStyle}>
       <div style={dashboardHeaderStyle}>
-        <h2>You are the owner of this contract</h2>
+        <h2>Welcome to the Admin Dashboard!</h2>
         <Link to='/admin/AddFixture'>
           <Button primary label='Add Fixture' />
         </Link>
       </div>
       <br />
-      <GetFixtures />
-      <GetBets />
-      <h3>Set Winner (Transaction)</h3>
-      <h3>Distribute Winnings (Transaction)</h3>
+      <GetFixtures admin />
     </div>
   );
 };
