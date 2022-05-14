@@ -24,7 +24,7 @@ const adminDashboardStyle: React.CSSProperties = {
   backgroundColor: "white",
   borderRadius: BOX.borderRadius,
   padding: BOX.padding,
-  width: "60%",
+  width: "75%",
   margin: "auto",
 };
 

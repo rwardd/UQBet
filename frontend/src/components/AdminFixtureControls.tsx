@@ -1,7 +1,7 @@
 import React, { FC, useState } from "react";
 import { Button } from "grommet";
 import { Fixture } from "../types";
-import SetResultModal from "./transactionComponents/SetResultModal";
+import SetResultModal from "./utils/ConfirmResultModal";
 
 interface FixtureControlProps {
   fixture: Fixture;
@@ -12,7 +12,6 @@ const FixtureControls: FC<FixtureControlProps> = (props) => {
   const [showModal, setShowModal] = useState(false);
 
   function getLabel(): string {
-    console.log(fixture);
     if (fixture.active) {
       return "Set Result";
     }
@@ -21,7 +20,7 @@ const FixtureControls: FC<FixtureControlProps> = (props) => {
       return "Invalidated";
     }
 
-    if (fixture.payedOut) {
+    if (!fixture.active) {
       return "Paid Out";
     }
 
@@ -38,7 +37,11 @@ const FixtureControls: FC<FixtureControlProps> = (props) => {
         onClick={() => setShowModal(true)}
       />
       {fixture.active && (
-        <SetResultModal setShow={setShowModal} show={showModal} />
+        <SetResultModal
+          setShow={setShowModal}
+          show={showModal}
+          fixture={fixture}
+        />
       )}
     </>
   );
