@@ -24,22 +24,22 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
   const [fixtures, setFixtures] = useState<any[]>([]);
   const hasFetchedData = useRef(false);
 
-  useEffect(() => {
-    async function _getFixtures() {
-      if (!bettingContract) {
-        throw new Error("Betting Contract not available");
-      } else {
-        let fixtureList = [];
-        const fixtureCount = await bettingContract.getFixtureCount();
+  async function _getFixtures() {
+    if (!bettingContract) {
+      throw new Error("Betting Contract not available");
+    } else {
+      let fixtureList = [];
+      const fixtureCount = await bettingContract.getFixtureCount();
 
-        for (let i = 0; i < fixtureCount; i++) {
-          fixtureList.push(await bettingContract.getFixture(i));
-        }
-
-        setFixtures(fixtureList);
+      for (let i = 0; i < fixtureCount; i++) {
+        fixtureList.push(await bettingContract.getFixture(i));
       }
-    }
 
+      setFixtures(fixtureList);
+    }
+  }
+
+  useEffect(() => {
     if (!hasFetchedData.current) {
       // Fetch Data
       _getFixtures();
@@ -69,7 +69,10 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
           )}
           {admin && (
             <TableCell>
-              <FixtureControls fixture={fixture} />
+              <FixtureControls
+                fixture={fixture}
+                refreshFixtureData={_getFixtures}
+              />
             </TableCell>
           )}
         </TableRow>

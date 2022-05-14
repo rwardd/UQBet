@@ -4,20 +4,19 @@ import { ERROR_CODE_TX_REJECTED_BY_USER } from "../../constants";
 import { Button } from "grommet";
 import { BigNumber } from "ethers";
 
-interface SetWinnerProps {
-  team: string;
+interface SetInvalidatedProps {
   fixtureID: BigNumber;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   refreshFixtureData: () => void;
 }
 
-const SetWinner: FC<SetWinnerProps> = (props) => {
-  const { team, fixtureID, setShow, refreshFixtureData } = props;
+const SetInvalidated: FC<SetInvalidatedProps> = (props) => {
+  const { fixtureID, setShow, refreshFixtureData } = props;
 
   const { setTransactionError, bettingContract, setTxBeingSet } =
     useContext(GlobalState);
 
-  const _setWinner = async (fixtureID: BigNumber, winner: string) => {
+  const _setInvalidated = async (fixtureID: BigNumber) => {
     try {
       setTransactionError(undefined);
 
@@ -25,7 +24,7 @@ const SetWinner: FC<SetWinnerProps> = (props) => {
         throw new Error("Betting Contract not available");
       }
 
-      const tx = await bettingContract.setWinner(fixtureID, winner);
+      const tx = await bettingContract.setInvalidated(fixtureID);
       setTxBeingSet(tx.hash);
 
       const receipt = await tx.wait();
@@ -38,7 +37,7 @@ const SetWinner: FC<SetWinnerProps> = (props) => {
         return;
       }
 
-      console.error("Caught error setting winner ", error);
+      console.error("Caught error setting fixutre as invalidated ", error);
       setTransactionError(error);
     } finally {
       setTxBeingSet(undefined);
@@ -51,12 +50,12 @@ const SetWinner: FC<SetWinnerProps> = (props) => {
     <>
       <Button
         primary
-        label={`Set winner as ${team}`}
-        onClick={() => _setWinner(fixtureID, team)}
+        label='Set Invalidated'
+        onClick={() => _setInvalidated(fixtureID)}
         margin='xsmall'
       />
     </>
   );
 };
 
-export default SetWinner;
+export default SetInvalidated;

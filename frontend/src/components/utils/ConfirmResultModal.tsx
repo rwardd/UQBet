@@ -2,16 +2,18 @@ import { Box, Text, Layer, NameValueList, NameValuePair } from "grommet";
 import React, { FC } from "react";
 import { BOX, COLORS } from "../../theme";
 import { Fixture } from "../../types";
+import SetInvalidated from "../transactionComponents/SetInvalidated";
 import SetWinner from "../transactionComponents/SetWinner";
 
 interface ConfirmResultModalProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   fixture: Fixture;
+  refreshFixtureData: () => void;
 }
 
 const ConfirmResultModal: FC<ConfirmResultModalProps> = (props) => {
-  const { show, setShow, fixture } = props;
+  const { show, setShow, fixture, refreshFixtureData } = props;
   const { fixId, home, away, date } = fixture;
 
   function fixtureDetails() {
@@ -44,8 +46,23 @@ const ConfirmResultModal: FC<ConfirmResultModalProps> = (props) => {
         >
           <h3 style={titleStyling}>{`Confirm result`}</h3>
           {fixtureDetails()}
-          <SetWinner team={home} fixtureID={fixId} />
-          <SetWinner team={away} fixtureID={fixId} />
+          <SetWinner
+            team={home}
+            fixtureID={fixId}
+            setShow={setShow}
+            refreshFixtureData={refreshFixtureData}
+          />
+          <SetWinner
+            team={away}
+            fixtureID={fixId}
+            setShow={setShow}
+            refreshFixtureData={refreshFixtureData}
+          />
+          <SetInvalidated
+            fixtureID={fixId}
+            setShow={setShow}
+            refreshFixtureData={refreshFixtureData}
+          />
         </Layer>
       )}
     </Box>

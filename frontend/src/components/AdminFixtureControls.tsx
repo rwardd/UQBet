@@ -5,10 +5,11 @@ import SetResultModal from "./utils/ConfirmResultModal";
 
 interface FixtureControlProps {
   fixture: Fixture;
+  refreshFixtureData: () => void;
 }
 
 const FixtureControls: FC<FixtureControlProps> = (props) => {
-  const { fixture } = props;
+  const { fixture, refreshFixtureData } = props;
   const [showModal, setShowModal] = useState(false);
 
   function getLabel(): string {
@@ -41,6 +42,7 @@ const FixtureControls: FC<FixtureControlProps> = (props) => {
           setShow={setShowModal}
           show={showModal}
           fixture={fixture}
+          refreshFixtureData={refreshFixtureData}
         />
       )}
     </>
