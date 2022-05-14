@@ -128,6 +128,7 @@ contract BetContract {
 
         locked = true;
         if(fixtures[allBets[betId].fixId].invalidated == true) {
+            console.log("in here", 1);
             (bool success, ) = allBets[betId].punter.call{value: allBets[betId].amount}("");
             require(success, "Failed to withdraw winnings"); 
             allBets[betId].payedOut = true;           
@@ -135,7 +136,7 @@ contract BetContract {
             uint losersTotal = calculateLosersTotal(allBets[betId].fixId) - uqSportsCut;
             uint winnersTotal = calculateWinnersTotal(allBets[betId].fixId);
             uint amountBet = allBets[betId].amount;
-            uint payout = amountBet + ((amountBet/ winnersTotal) * losersTotal);
+            uint payout = amountBet + (((amountBet * 100/ winnersTotal) * losersTotal)/100);
 
             (bool success, ) = allBets[betId].punter.call{value: payout}("");
             require(success, "Failed to withdraw winnings");
@@ -167,7 +168,7 @@ contract BetContract {
     }
 
     function setWinner(uint fixtureId, string memory winner, bool invalidated) public {
-        require(msg.sender != owner, "Only UQ Sports Administration can set the winner");
+        require(msg.sender == owner, "Only UQ Sports Administration can set the winner");
 
         if (invalidated) {
             fixtures[fixtureId].invalidated = true;
