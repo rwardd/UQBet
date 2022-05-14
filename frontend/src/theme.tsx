@@ -18,6 +18,7 @@ export const theme = {
   global: {
     colors: {
       brand: COLORS.purple,
+      control: COLORS.white,
     },
     focus: {
       border: {

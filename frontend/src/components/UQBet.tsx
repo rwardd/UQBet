@@ -15,7 +15,6 @@ import TokenArtifact from "../contracts/BetContract.json";
 import contractAddress from "../contracts/contract-address.json";
 import BetSlip from "./BetSlip";
 import { Web3Provider } from "@ethersproject/providers";
-import AdminDashboard from "./AdminDashboard";
 
 // This is the Hardhat Network id, you might change it in the hardhat.config.js.
 // If you are using MetaMask, be sure to change the Network id to 1337.
