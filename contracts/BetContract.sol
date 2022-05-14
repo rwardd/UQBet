@@ -10,7 +10,6 @@ contract BetContract {
         string away;
         string date;
         bool active;
-        bool payedOut;
         bool invalidated;
         uint[] bets;
     }
@@ -22,6 +21,7 @@ contract BetContract {
         string team;
         uint amount;
         bool won;
+        bool payedOut;
     }
 
     address public owner;
@@ -30,8 +30,8 @@ contract BetContract {
     uint uqSportsCut;
     bool locked;
     
-    mapping(uint => Fixture) public fixtures;
-    mapping(uint => Bet) public allBets;
+    mapping(uint => Fixture) fixtures;
+    mapping(uint => Bet) allBets;
 
     uint[] betIdList;
     uint[] fixtureIdList;
@@ -56,13 +56,14 @@ contract BetContract {
      */
     function addFixture(string memory _home, string memory _away, string memory _date) public {
         require(msg.sender == owner, "Only UQ Sports Administration can add Fixtures");
+        //TODO:
+        //Ensure you cant duplicate fixtures
         Fixture memory newFixture = fixtures[fixtureCounter++];
         newFixture.fixId = (fixtureCounter - 1);
         newFixture.home = _home;
         newFixture.away = _away;
         newFixture.date = _date;
         newFixture.active = true;
-        newFixture.payedOut = false;
         newFixture.invalidated = false;
         
         fixtureIdList.push(fixtureCounter - 1);
@@ -118,88 +119,67 @@ contract BetContract {
         allBets[betCounter - 1] = newBet;
     }
 
-
-    /*
-     * A function that distributes the losers funds between the winners
-     * proportionally based on the winners initial bet amounts 
-     */
-    function distributeWinnings(Fixture memory fixture) public payable{
-
-        require(fixture.active = false, "Cannot return funds, fixture is still active");
-        require(fixture.invalidated = false, "Cannot return funds, fixture is invalid");
-        require(fixture.payedOut = false, "Fixture has already been payed out");
+    function retrieveFunds(uint betId) public payable {
         require(!locked, "Re-entrancy detected");
-        
-        locked = true;       
-        uint losersTotal = calculateLosersTotal(fixture) - uqSportsCut;
-        uint winnersTotal = calculateWinnersTotal(fixture);
-        uint amountBet = 0;
-        uint payout = 0;
-        
-        for (uint i = 0; i < fixture.bets.length; i++) {
-            if (allBets[fixture.bets[i]].won == true) {
-                amountBet = allBets[fixture.bets[i]].amount;
-                payout = amountBet + ((amountBet/ winnersTotal) * losersTotal);
-                (bool success, ) = allBets[fixture.bets[i]].punter.call{value: allBets[fixture.bets[i]].amount}("");
-                require(success, "Failed to payout punter"); 
-            }
+        require(fixtures[allBets[betId].fixId].active == false, "Cannot withdraw winnings, fixture is still active");
+        require(allBets[betId].payedOut == false, "Bet has already been payed out");
+        require(allBets[betId].won == true, "This bet has not been won");
+        require(allBets[betId].punter == msg.sender, "Not the owner of this bet");
+
+        locked = true;
+        if(fixtures[allBets[betId].fixId].invalidated == true) {
+            (bool success, ) = allBets[betId].punter.call{value: allBets[betId].amount}("");
+            require(success, "Failed to withdraw winnings"); 
+            allBets[betId].payedOut = true;           
+        } else {
+            uint losersTotal = calculateLosersTotal(allBets[betId].fixId) - uqSportsCut;
+            uint winnersTotal = calculateWinnersTotal(allBets[betId].fixId);
+            uint amountBet = allBets[betId].amount;
+            uint payout = amountBet + ((amountBet/ winnersTotal) * losersTotal);
+
+            (bool success, ) = allBets[betId].punter.call{value: payout}("");
+            require(success, "Failed to withdraw winnings");
+            allBets[betId].payedOut = true;
         }
-        fixtures[fixture.fixId].payedOut = true;
-        locked = false; 
+        locked = false;
     }
 
-    /*
-     * Return all funds to players who have bet on this fixture.
-     * To be utilised in the event of a draw or match cancellation
-     */
-    function returnFunds(Fixture memory fixture) public payable {
-        require(fixture.active = false, "Cannot return funds, fixture is still active");
-        require(fixture.invalidated = true, "Cannot return funds, fixture is not invalid");
-        require(fixture.payedOut = false, "Fixture has already been payed out");
-        require(!locked, "Re-entrancy detected");
-
-        locked = true;   
-        for (uint i = 0; i < fixture.bets.length; i++) {
-            (bool success, ) = allBets[fixture.bets[i]].punter.call{value: allBets[fixture.bets[i]].amount}("");
-            require(success, "Failed to payout punter"); 
-        }
-        fixtures[fixture.fixId].payedOut = true;
-        locked = false; 
-    }
-
-    function calculateLosersTotal(Fixture memory fixture) private view returns(uint) {
+    function calculateLosersTotal(uint fixtureId) private view returns(uint) {
         uint loserSum = 0;
 
-        for (uint i = 0; i < fixture.bets.length; i++) {
-            if (allBets[fixture.bets[i]].won == false) {
-                loserSum += allBets[fixture.bets[i]].amount;
+        for (uint i = 0; i < fixtures[fixtureId].bets.length; i++) {
+            if (allBets[fixtures[fixtureId].bets[i]].won == false) {
+                loserSum += allBets[fixtures[fixtureId].bets[i]].amount;
             }
         }
         return loserSum;
     }
 
-    function calculateWinnersTotal(Fixture memory fixture) private view returns(uint) {
+    function calculateWinnersTotal(uint fixtureId) private view returns(uint) {
         uint winnerSum = 0;
 
-        for (uint i = 0; i < fixture.bets.length; i++) {
-            if (allBets[fixture.bets[i]].won == true) {
-                winnerSum += allBets[fixture.bets[i]].amount;
+        for (uint i = 0; i < fixtures[fixtureId].bets.length; i++) {
+            if (allBets[fixtures[fixtureId].bets[i]].won == true) {
+                winnerSum += allBets[fixtures[fixtureId].bets[i]].amount;
             }
         }
         return winnerSum;
     }
 
-    function setWinner(Fixture memory fixture, string memory winner, bool invalidated) public {
+    function setWinner(uint fixtureId, string memory winner, bool invalidated) public {
         require(msg.sender != owner, "Only UQ Sports Administration can set the winner");
 
         if (invalidated) {
-            fixtures[fixture.fixId].invalidated = true;
-            fixtures[fixture.fixId].active = false;
+            fixtures[fixtureId].invalidated = true;
+            fixtures[fixtureId].active = false;
+            for (uint i = 0; i < fixtures[fixtureId].bets.length; i++) {
+                    allBets[fixtures[fixtureId].bets[i]].won = true;
+            }
         } else {
-            fixtures[fixture.fixId].active = false;
-            for (uint i = 0; i < fixture.bets.length; i++) {
-                if (keccak256(abi.encodePacked((allBets[fixture.bets[i]].team))) == keccak256(abi.encodePacked((winner)))) {
-                    allBets[fixture.bets[i]].won = true;
+            fixtures[fixtureId].active = false;
+            for (uint i = 0; i < fixtures[fixtureId].bets.length; i++) {
+                if (keccak256(abi.encodePacked((allBets[fixtures[fixtureId].bets[i]].team))) == keccak256(abi.encodePacked((winner)))) {
+                    allBets[fixtures[fixtureId].bets[i]].won = true;
                 }
             }
         }

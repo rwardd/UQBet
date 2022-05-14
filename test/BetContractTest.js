@@ -54,7 +54,6 @@ describe("BetContract contract", function () {
             expect((await betContract.getFixture(0)).away).to.equal("White Sox");
             expect((await betContract.getFixture(0)).date).to.equal("14 May 22");
             expect((await betContract.getFixture(0)).active).to.equal(true);
-            expect((await betContract.getFixture(0)).payedOut).to.equal(false);
             expect((await betContract.getFixture(0)).invalidated).to.equal(false);
             
             //Ensure Fixture Count is incremented
@@ -67,7 +66,6 @@ describe("BetContract contract", function () {
             expect((await betContract.getFixture(1)).away).to.equal("Dodgers");
             expect((await betContract.getFixture(1)).date).to.equal("15 May 22");
             expect((await betContract.getFixture(1)).active).to.equal(true);
-            expect((await betContract.getFixture(1)).payedOut).to.equal(false);
             expect((await betContract.getFixture(1)).invalidated).to.equal(false);
             
             //Ensure Fixture Count is incremented
@@ -130,9 +128,4 @@ describe("BetContract contract", function () {
     describe("Payout", function () {
 
     });
-
-    describe("Refund", function () {
-
-    });
-
 });
