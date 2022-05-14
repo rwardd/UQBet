@@ -21,3 +21,22 @@ export const UQBetMenu = () => {
   ];
   return <Menu label={"Menu"} color={COLORS.white} items={items} />;
 };
+
+export const AdminMenu = () => {
+  let navigate = useNavigate();
+  const items = [
+    {
+      label: "Admin Dashboard",
+      onClick: () => {
+        navigate("/admin");
+      },
+    },
+    {
+      label: "Add Fixture",
+      onClick: () => {
+        navigate("/admin/AddFixture");
+      },
+    },
+  ];
+  return <Menu label={"Menu"} color={COLORS.white} items={items} />;
+};

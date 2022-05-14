@@ -8,7 +8,7 @@ const AdminPage: FC = () => {
 
   return (
     <>
-      <Header />
+      <Header admin />
       <AdminDashboard />
     </>
   );
