@@ -4,8 +4,9 @@ import { GlobalState } from "../globalState";
 import { ethers } from "ethers";
 import GetFixtures from "./viewComponents/GetFixtures";
 import { Fixture } from "../types";
+import { Box, Distribution, Heading } from "grommet";
 
-const BetSlip: FC = () => {
+const UQBetDashboard: FC = () => {
   const { bettingContract } = useContext(GlobalState);
 
   const [homeTeamBet, setHomeTeamBet] = useState(0);
@@ -42,10 +43,41 @@ const BetSlip: FC = () => {
 
   return (
     <div style={betSlipStyling}>
-      <h1 style={{ textAlign: "center", fontSize: "50px" }}>Place a bet</h1>
-      <GetFixtures getSelectOption setSelectedFixture={setSelectedFixture} />
-      <h3>Home Team: {selectedFixture && selectedFixture.home}</h3>
-      {/* <h3>Total Amount: x ETH</h3> */}
+      <Heading margin={{ bottom: "medium" }} level='2'>
+        Welcome to your UQBet Dashboard!
+      </Heading>
+      <Distribution
+        values={[
+          { value: 50, color: "brand" },
+          { value: 30, color: "light-2" },
+          { value: 20, color: COLORS.lightPurple },
+        ]}
+      >
+        {(value) => (
+          <Box
+            pad='medium'
+            style={{ borderRadius: BOX.borderRadius }}
+            background={value.color}
+            fill
+          >
+            {/* <Text size='large'>Your mum</Text> */}
+            {value.value == 50 && (
+              <>
+                <Heading margin={{ bottom: "medium" }} level='3'>
+                  Fixtures
+                </Heading>
+                <GetFixtures
+                  getSelectOption
+                  setSelectedFixture={setSelectedFixture}
+                />
+              </>
+            )}
+          </Box>
+        )}
+      </Distribution>
+      {/* <GetFixtures getSelectOption setSelectedFixture={setSelectedFixture} /> */}
+      {/* <h3>Home Team: {selectedFixture && selectedFixture.home}</h3>
+      <h3>Total Amount: x ETH</h3>
       <form onSubmit={submitHomeTeamBet}>
         <label>
           Enter an amount to bid:
@@ -69,7 +101,7 @@ const BetSlip: FC = () => {
           />
           <button>Submit</button>
         </label>
-      </form>
+      </form> */}
     </div>
   );
 };
@@ -80,7 +112,8 @@ const betSlipStyling: React.CSSProperties = {
   borderRadius: BOX.borderRadius,
   padding: BOX.padding,
   width: "75%",
+  height: "650px",
   margin: "auto",
 };
 
-export default BetSlip;
+export default UQBetDashboard;

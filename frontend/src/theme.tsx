@@ -1,5 +1,6 @@
 export const COLORS = {
   purple: "#65388E",
+  lightPurple: "#9564bf",
   white: "#FFFFFF",
   green: "#00C781",
 };
@@ -18,6 +19,7 @@ export const theme = {
   global: {
     colors: {
       brand: COLORS.purple,
+      "accent-1": COLORS.green,
     },
     focus: {
       border: {
