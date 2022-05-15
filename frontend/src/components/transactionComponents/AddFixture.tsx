@@ -118,7 +118,7 @@ const AddFixture: FC = () => {
             format='mm/dd/yyyy'
             value={date}
             onChange={({ value }) =>
-              setDate(new Date(value[0]).toLocaleDateString())
+              setDate(new Date(value.toString()).toLocaleDateString())
             }
           />
         </FormField>
