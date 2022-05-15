@@ -10,7 +10,8 @@ import {
 import React, { FC, useContext, useEffect, useState, useRef } from "react";
 import { GlobalState } from "../../globalState";
 import { Fixture } from "../../types";
-import FixtureControls from "../AdminFixtureControls";
+import AdminFixtureControls from "../AdminFixtureControls";
+import FixtureControls from "../FixtureControls";
 
 interface GetFixturesProps {
   getSelectOption?: boolean;
@@ -55,21 +56,17 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
           <TableCell>{home}</TableCell>
           <TableCell>{away}</TableCell>
           <TableCell>{date}</TableCell>
-          {getSelectOption && setSelectedFixture && (
+          {!admin && (
             <TableCell>
-              {
-                <Button
-                  secondary
-                  label='Select'
-                  size='small'
-                  onClick={() => setSelectedFixture(fixture)}
-                />
-              }
+              <FixtureControls
+                fixture={fixture}
+                refreshFixtureData={_getFixtures}
+              />
             </TableCell>
           )}
           {admin && (
             <TableCell>
-              <FixtureControls
+              <AdminFixtureControls
                 fixture={fixture}
                 refreshFixtureData={_getFixtures}
               />
