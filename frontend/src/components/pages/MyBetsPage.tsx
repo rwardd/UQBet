@@ -11,7 +11,6 @@ const MyBetsPage: FC = () => {
       <Header />
       <div style={myBetsStyle}>
         <h1 style={{ textAlign: "center", fontSize: "50px" }}>My Bets</h1>
-        <GetBets />
       </div>
     </>
   );

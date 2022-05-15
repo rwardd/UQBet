@@ -116,7 +116,7 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
   }
 
   return (
-    <div style={{ marginBottom: "15px" }}>
+    <div>
       {fixtures.length === 0 ? "There are currently no fixtures" : table()}
     </div>
   );

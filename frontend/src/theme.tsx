@@ -1,6 +1,6 @@
 export const COLORS = {
   purple: "#65388E",
-  lightPurple: "#9564bf",
+  lightPurple: "#7c46aa",
   white: "#FFFFFF",
   green: "#00C781",
 };

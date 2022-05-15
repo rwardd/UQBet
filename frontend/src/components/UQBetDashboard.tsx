@@ -5,6 +5,8 @@ import { ethers } from "ethers";
 import GetFixtures from "./viewComponents/GetFixtures";
 import { Fixture } from "../types";
 import { Box, Distribution, Heading } from "grommet";
+import GetBets from "./viewComponents/GetBets";
+import ActiveBets from "./ActiveBets";
 
 const UQBetDashboard: FC = () => {
   const { bettingContract } = useContext(GlobalState);
@@ -12,6 +14,7 @@ const UQBetDashboard: FC = () => {
   const [homeTeamBet, setHomeTeamBet] = useState(0);
   const [awayTeamBet, setAwayTeamBet] = useState(0);
   const [selectedFixture, setSelectedFixture] = useState<null | Fixture>(null);
+  const [userBets, refresh] = GetBets();
 
   async function submitHomeTeamBet(event: any) {
     event.preventDefault();
@@ -49,8 +52,8 @@ const UQBetDashboard: FC = () => {
       <Distribution
         values={[
           { value: 50, color: "brand" },
-          { value: 30, color: "light-2" },
           { value: 20, color: COLORS.lightPurple },
+          { value: 30, color: "light-2" },
         ]}
       >
         {(value) => (
@@ -63,7 +66,7 @@ const UQBetDashboard: FC = () => {
             {/* <Text size='large'>Your mum</Text> */}
             {value.value == 50 && (
               <>
-                <Heading margin={{ bottom: "medium" }} level='3'>
+                <Heading margin={{ bottom: "small" }} level='3'>
                   Fixtures
                 </Heading>
                 <GetFixtures
@@ -72,10 +75,25 @@ const UQBetDashboard: FC = () => {
                 />
               </>
             )}
+            {value.value == 20 && (
+              <>
+                <Heading margin={{ bottom: "small" }} level='3' color='white'>
+                  Active Bets
+                </Heading>
+                <ActiveBets userBets={userBets} />
+              </>
+            )}
+            {value.value == 30 && (
+              <>
+                <Heading margin={{ bottom: "small" }} level='3'>
+                  Completed Bets
+                </Heading>
+                <ActiveBets userBets={userBets} />
+              </>
+            )}
           </Box>
         )}
       </Distribution>
-      {/* <GetFixtures getSelectOption setSelectedFixture={setSelectedFixture} /> */}
       {/* <h3>Home Team: {selectedFixture && selectedFixture.home}</h3>
       <h3>Total Amount: x ETH</h3>
       <form onSubmit={submitHomeTeamBet}>
