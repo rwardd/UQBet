@@ -7,10 +7,11 @@ import FixtureControls from "../FixtureControls";
 
 interface GetFixturesProps {
   admin?: boolean;
+  refreshBets?: () => void;
 }
 
 const GetFixtures: FC<GetFixturesProps> = (props) => {
-  const { admin } = props;
+  const { admin, refreshBets } = props;
   const { bettingContract } = useContext(GlobalState);
   const [fixtures, setFixtures] = useState<any[]>([]);
   const hasFetchedData = useRef(false);
@@ -46,9 +47,9 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
           <TableCell>{home}</TableCell>
           <TableCell>{away}</TableCell>
           <TableCell>{date}</TableCell>
-          {!admin && (
+          {!admin && refreshBets && (
             <TableCell>
-              <FixtureControls fixture={fixture} />
+              <FixtureControls fixture={fixture} refreshBets={refreshBets} />
             </TableCell>
           )}
           {admin && (

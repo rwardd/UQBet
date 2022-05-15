@@ -183,6 +183,8 @@ contract BetContract {
         for (uint i = 0; i < fixtures[fixtureId].bets.length; i++) {
             if (keccak256(abi.encodePacked((allBets[fixtures[fixtureId].bets[i]].team))) == keccak256(abi.encodePacked((winner)))) {
                 allBets[fixtures[fixtureId].bets[i]].won = true;
+            } else {
+                allBets[fixtures[fixtureId].bets[i]].payedOut = true;
             }
         }
     }

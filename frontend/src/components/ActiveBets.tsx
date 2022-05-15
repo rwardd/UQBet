@@ -2,23 +2,31 @@ import { ethers } from "ethers";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "grommet";
 import React, { FC } from "react";
 import { Bet } from "../types";
+import RetrieveFunds from "./transactionComponents/RetrieveFunds";
 
 interface ActiveBetsProps {
   userBets: Bet[];
+  refreshBets: () => void;
 }
 
 const ActiveBets: FC<ActiveBetsProps> = (props) => {
-  const { userBets } = props;
+  const { userBets, refreshBets } = props;
+
+  const filteredActiveBets = userBets.filter((bet) => !bet.payedOut);
 
   function tableData() {
-    const betData = userBets.map((bet: Bet) => {
-      const { betId, team, amount, won } = bet;
+    const betData = filteredActiveBets.map((bet: Bet) => {
+      const { betId, team, amount } = bet;
+
       const formattedAmount = ethers.utils.formatEther(amount);
+
       return (
         <TableRow key={betId.toString()}>
           <TableCell>{team}</TableCell>
           <TableCell>{formattedAmount}</TableCell>
-          <TableCell>{won.toString()}</TableCell>
+          <TableCell>
+            <RetrieveFunds bet={bet} refreshBets={refreshBets} />
+          </TableCell>
         </TableRow>
       );
     });
@@ -27,7 +35,7 @@ const ActiveBets: FC<ActiveBetsProps> = (props) => {
   }
 
   function tableHeader() {
-    let columns = ["Team", "Amount", "Won"];
+    let columns = ["Team", "Amount", "Result"];
 
     const tableCells = columns.map((columnTitle) => {
       return (
@@ -55,7 +63,9 @@ const ActiveBets: FC<ActiveBetsProps> = (props) => {
 
   return (
     <div style={{ marginBottom: "15px" }}>
-      {userBets.length === 0 ? "You don't have any actve bets" : table()}
+      {filteredActiveBets.length === 0
+        ? "You don't have any actve bets"
+        : table()}
     </div>
   );
 };

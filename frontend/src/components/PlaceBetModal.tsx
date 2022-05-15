@@ -8,10 +8,11 @@ interface PlaceBetModalProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   fixture: Fixture;
+  refreshBets: () => void;
 }
 
 const PlaceBetModal: FC<PlaceBetModalProps> = (props) => {
-  const { show, setShow, fixture } = props;
+  const { show, setShow, fixture, refreshBets } = props;
   const { fixId, home, away, date } = fixture;
 
   function fixtureDetails() {
@@ -50,6 +51,7 @@ const PlaceBetModal: FC<PlaceBetModalProps> = (props) => {
             away={away}
             fixtureID={fixId}
             setShow={setShow}
+            refreshBets={refreshBets}
           />
         </Layer>
       )}

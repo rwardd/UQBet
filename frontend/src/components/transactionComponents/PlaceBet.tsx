@@ -9,10 +9,11 @@ interface PlaceBetProps {
   away: string;
   fixtureID: BigNumber;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
+  refreshBets: () => void;
 }
 
 const PlaceBet: FC<PlaceBetProps> = (props) => {
-  const { home, away, fixtureID, setShow } = props;
+  const { home, away, fixtureID, setShow, refreshBets } = props;
 
   const [winner, setWinner] = useState("");
   const [amount, setAmount] = useState(0);
@@ -80,6 +81,7 @@ const PlaceBet: FC<PlaceBetProps> = (props) => {
       );
       setStatus("success");
       setShow(false);
+      refreshBets();
     } catch (err) {
       setStatus("typing");
       if (err instanceof Error) {

@@ -6,12 +6,12 @@ import GetBets from "./viewComponents/GetBets";
 import ActiveBets from "./ActiveBets";
 
 const UQBetDashboard: FC = () => {
-  const [userBets] = GetBets();
+  const [userBets, refreshBets] = GetBets();
 
   return (
     <div style={betSlipStyling}>
       <Heading margin={{ bottom: "medium" }} level='2'>
-        Welcome to your UQBet Dashboard!
+        Welcome to your dashboard.
       </Heading>
       <Distribution
         values={[
@@ -32,7 +32,7 @@ const UQBetDashboard: FC = () => {
                 <Heading margin={{ bottom: "small" }} level='3'>
                   Fixtures
                 </Heading>
-                <GetFixtures />
+                <GetFixtures refreshBets={refreshBets} />
               </>
             )}
             {value.value === 20 && (
@@ -40,7 +40,7 @@ const UQBetDashboard: FC = () => {
                 <Heading margin={{ bottom: "small" }} level='3' color='white'>
                   Active Bets
                 </Heading>
-                <ActiveBets userBets={userBets} />
+                <ActiveBets userBets={userBets} refreshBets={refreshBets} />
               </>
             )}
             {value.value === 30 && (
@@ -48,7 +48,7 @@ const UQBetDashboard: FC = () => {
                 <Heading margin={{ bottom: "small" }} level='3'>
                   Completed Bets
                 </Heading>
-                <ActiveBets userBets={userBets} />
+                <ActiveBets userBets={userBets} refreshBets={refreshBets} />
               </>
             )}
           </Box>
