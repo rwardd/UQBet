@@ -1,16 +1,14 @@
 import React, { FC, useState } from "react";
 import { Button } from "grommet";
 import { Fixture } from "../types";
-import ConfirmResultModal from "./ConfirmResultModal";
 import PlaceBetModal from "./PlaceBetModal";
 
 interface FixtureControlProps {
   fixture: Fixture;
-  refreshFixtureData: () => void;
 }
 
 const FixtureControls: FC<FixtureControlProps> = (props) => {
-  const { fixture, refreshFixtureData } = props;
+  const { fixture } = props;
   const [showModal, setShowModal] = useState(false);
 
   function getLabel(): string {

@@ -1,12 +1,4 @@
-import {
-  Button,
-  Heading,
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "grommet";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "grommet";
 import React, { FC, useContext, useEffect, useState, useRef } from "react";
 import { GlobalState } from "../../globalState";
 import { Fixture } from "../../types";
@@ -56,10 +48,7 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
           <TableCell>{date}</TableCell>
           {!admin && (
             <TableCell>
-              <FixtureControls
-                fixture={fixture}
-                refreshFixtureData={_getFixtures}
-              />
+              <FixtureControls fixture={fixture} />
             </TableCell>
           )}
           {admin && (

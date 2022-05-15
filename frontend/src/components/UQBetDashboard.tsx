@@ -1,16 +1,12 @@
-import React, { FC, useContext, useState } from "react";
+import React, { FC } from "react";
 import { COLORS, BOX } from "../theme";
-import { GlobalState } from "../globalState";
-import { ethers } from "ethers";
 import GetFixtures from "./viewComponents/GetFixtures";
-import { Fixture } from "../types";
 import { Box, Distribution, Heading } from "grommet";
 import GetBets from "./viewComponents/GetBets";
 import ActiveBets from "./ActiveBets";
 
 const UQBetDashboard: FC = () => {
-  const { bettingContract } = useContext(GlobalState);
-  const [userBets, refresh] = GetBets();
+  const [userBets] = GetBets();
 
   return (
     <div style={betSlipStyling}>
@@ -31,7 +27,7 @@ const UQBetDashboard: FC = () => {
             background={value.color}
             fill
           >
-            {value.value == 50 && (
+            {value.value === 50 && (
               <>
                 <Heading margin={{ bottom: "small" }} level='3'>
                   Fixtures
@@ -39,7 +35,7 @@ const UQBetDashboard: FC = () => {
                 <GetFixtures />
               </>
             )}
-            {value.value == 20 && (
+            {value.value === 20 && (
               <>
                 <Heading margin={{ bottom: "small" }} level='3' color='white'>
                   Active Bets
@@ -47,7 +43,7 @@ const UQBetDashboard: FC = () => {
                 <ActiveBets userBets={userBets} />
               </>
             )}
-            {value.value == 30 && (
+            {value.value === 30 && (
               <>
                 <Heading margin={{ bottom: "small" }} level='3'>
                   Completed Bets

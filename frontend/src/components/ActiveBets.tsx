@@ -1,12 +1,5 @@
 import { ethers } from "ethers";
-import {
-  Heading,
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "grommet";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "grommet";
 import React, { FC } from "react";
 import { Bet } from "../types";
 

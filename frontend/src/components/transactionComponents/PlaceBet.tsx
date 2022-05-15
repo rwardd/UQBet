@@ -84,7 +84,7 @@ const PlaceBet: FC<PlaceBetProps> = (props) => {
       setStatus("typing");
       if (err instanceof Error) {
         setError(err);
-        console.error(err);
+        console.error(error);
       }
     }
   }
