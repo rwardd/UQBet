@@ -1,5 +1,6 @@
 export const COLORS = {
   purple: "#65388E",
+  lightPurple: "#7c46aa",
   white: "#FFFFFF",
   green: "#00C781",
 };
@@ -14,15 +15,24 @@ export const BOX = {
   padding: 40,
 };
 
+export const DASH = {
+  width: "1000px",
+  minHeight: "650px",
+};
+
 export const theme = {
   global: {
     colors: {
       brand: COLORS.purple,
+      "accent-1": COLORS.green,
     },
     focus: {
       border: {
         color: COLORS.green,
       },
+    },
+    tag: {
+      seperator: "",
     },
   },
 };

@@ -1,7 +1,6 @@
 import React, { FC } from "react";
 import { BOX, COLORS } from "../../theme";
 import Header from "../Header";
-import GetBets from "../viewComponents/GetBets";
 
 const MyBetsPage: FC = () => {
   document.body.style.backgroundColor = COLORS.purple;
@@ -11,7 +10,6 @@ const MyBetsPage: FC = () => {
       <Header />
       <div style={myBetsStyle}>
         <h1 style={{ textAlign: "center", fontSize: "50px" }}>My Bets</h1>
-        <GetBets />
       </div>
     </>
   );

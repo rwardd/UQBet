@@ -1,19 +1,18 @@
 import { Box, Text, Layer, NameValueList, NameValuePair } from "grommet";
 import React, { FC } from "react";
-import { BOX, COLORS } from "../../theme";
-import { Fixture } from "../../types";
-import SetInvalidated from "../transactionComponents/SetInvalidated";
-import SetWinner from "../transactionComponents/SetWinner";
+import { BOX, COLORS } from "../theme";
+import { Fixture } from "../types";
+import PlaceBet from "./transactionComponents/PlaceBet";
 
-interface ConfirmResultModalProps {
+interface PlaceBetModalProps {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
   fixture: Fixture;
-  refreshFixtureData: () => void;
+  refreshBets: () => void;
 }
 
-const ConfirmResultModal: FC<ConfirmResultModalProps> = (props) => {
-  const { show, setShow, fixture, refreshFixtureData } = props;
+const PlaceBetModal: FC<PlaceBetModalProps> = (props) => {
+  const { show, setShow, fixture, refreshBets } = props;
   const { fixId, home, away, date } = fixture;
 
   function fixtureDetails() {
@@ -35,7 +34,7 @@ const ConfirmResultModal: FC<ConfirmResultModalProps> = (props) => {
   }
 
   return (
-    <Box>
+    <Box background={{ dark: false }}>
       {show && (
         <Layer
           onEsc={() => setShow(false)}
@@ -45,24 +44,14 @@ const ConfirmResultModal: FC<ConfirmResultModalProps> = (props) => {
           margin='none'
           animation='fadeIn'
         >
-          <h3 style={titleStyling}>{`Confirm result`}</h3>
+          <h3 style={titleStyling}>Place bet</h3>
           {fixtureDetails()}
-          <SetWinner
-            team={home}
+          <PlaceBet
+            home={home}
+            away={away}
             fixtureID={fixId}
             setShow={setShow}
-            refreshFixtureData={refreshFixtureData}
-          />
-          <SetWinner
-            team={away}
-            fixtureID={fixId}
-            setShow={setShow}
-            refreshFixtureData={refreshFixtureData}
-          />
-          <SetInvalidated
-            fixtureID={fixId}
-            setShow={setShow}
-            refreshFixtureData={refreshFixtureData}
+            refreshBets={refreshBets}
           />
         </Layer>
       )}
@@ -81,4 +70,4 @@ const modalStyling: React.CSSProperties = {
   marginTop: "10%",
 };
 
-export default ConfirmResultModal;
+export default PlaceBetModal;

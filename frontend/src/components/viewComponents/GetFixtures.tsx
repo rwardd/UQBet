@@ -1,25 +1,17 @@
-import {
-  Button,
-  Heading,
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "grommet";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "grommet";
 import React, { FC, useContext, useEffect, useState, useRef } from "react";
 import { GlobalState } from "../../globalState";
 import { Fixture } from "../../types";
-import FixtureControls from "../AdminFixtureControls";
+import AdminFixtureControls from "../AdminFixtureControls";
+import FixtureControls from "../FixtureControls";
 
 interface GetFixturesProps {
-  getSelectOption?: boolean;
   admin?: boolean;
-  setSelectedFixture?: React.Dispatch<React.SetStateAction<any>>;
+  refreshBets?: () => void;
 }
 
 const GetFixtures: FC<GetFixturesProps> = (props) => {
-  const { getSelectOption, setSelectedFixture, admin } = props;
+  const { admin, refreshBets } = props;
   const { bettingContract } = useContext(GlobalState);
   const [fixtures, setFixtures] = useState<any[]>([]);
   const hasFetchedData = useRef(false);
@@ -55,21 +47,14 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
           <TableCell>{home}</TableCell>
           <TableCell>{away}</TableCell>
           <TableCell>{date}</TableCell>
-          {getSelectOption && setSelectedFixture && (
+          {!admin && refreshBets && (
             <TableCell>
-              {
-                <Button
-                  secondary
-                  label='Select'
-                  size='small'
-                  onClick={() => setSelectedFixture(fixture)}
-                />
-              }
+              <FixtureControls fixture={fixture} refreshBets={refreshBets} />
             </TableCell>
           )}
           {admin && (
             <TableCell>
-              <FixtureControls
+              <AdminFixtureControls
                 fixture={fixture}
                 refreshFixtureData={_getFixtures}
               />
@@ -84,8 +69,8 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
 
   function tableHeader() {
     let columns = ["Home", "Away", "Date"];
-    if (getSelectOption) {
-      columns.push("Select");
+    if (!admin) {
+      columns.push("Bet");
     }
     if (admin) {
       columns.push("Controls");
@@ -116,10 +101,7 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
   }
 
   return (
-    <div style={{ marginBottom: "15px" }}>
-      <Heading margin={{ bottom: "small" }} level='2'>
-        Fixtures
-      </Heading>
+    <div>
       {fixtures.length === 0 ? "There are currently no fixtures" : table()}
     </div>
   );

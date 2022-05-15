@@ -1,28 +1,24 @@
 import React, { FC, useState } from "react";
 import { Button } from "grommet";
 import { Fixture } from "../types";
-import SetResultModal from "./ConfirmResultModal";
+import PlaceBetModal from "./PlaceBetModal";
 
-interface AdminFixtureControlProps {
+interface FixtureControlProps {
   fixture: Fixture;
-  refreshFixtureData: () => void;
+  refreshBets: () => void;
 }
 
-const AdmimFixtureControls: FC<AdminFixtureControlProps> = (props) => {
-  const { fixture, refreshFixtureData } = props;
+const FixtureControls: FC<FixtureControlProps> = (props) => {
+  const { fixture, refreshBets } = props;
   const [showModal, setShowModal] = useState(false);
 
   function getLabel(): string {
     if (fixture.active) {
-      return "Set Result";
-    }
-
-    if (fixture.invalidated) {
-      return "Invalidated";
+      return "Place bet";
     }
 
     if (!fixture.active) {
-      return "Paid Out";
+      return "Finished";
     }
 
     return "Error";
@@ -38,15 +34,15 @@ const AdmimFixtureControls: FC<AdminFixtureControlProps> = (props) => {
         onClick={() => setShowModal(true)}
       />
       {fixture.active && (
-        <SetResultModal
+        <PlaceBetModal
           setShow={setShowModal}
           show={showModal}
           fixture={fixture}
-          refreshFixtureData={refreshFixtureData}
+          refreshBets={refreshBets}
         />
       )}
     </>
   );
 };
 
-export default AdmimFixtureControls;
+export default FixtureControls;

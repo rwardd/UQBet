@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { BOX, COLORS } from "../../../theme";
+import { BOX, COLORS, DASH } from "../../../theme";
 import Header from "../../Header";
 import AddFixture from "../../transactionComponents/AddFixture";
 import BackButton from "../../utils/BackButton";
@@ -39,7 +39,8 @@ const addFixturePageStyle: React.CSSProperties = {
   backgroundColor: "white",
   borderRadius: BOX.borderRadius,
   padding: BOX.padding,
-  width: "75%",
+  width: DASH.width,
+  minHeight: DASH.minHeight,
   margin: "auto",
 };
 
