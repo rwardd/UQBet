@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { COLORS, BOX } from "../theme";
+import { COLORS, BOX, DASH } from "../theme";
 import GetFixtures from "./viewComponents/GetFixtures";
 import { Box, Distribution, Heading } from "grommet";
 import GetBets from "./viewComponents/GetBets";
@@ -63,8 +63,8 @@ const betSlipStyling: React.CSSProperties = {
   backgroundColor: "white",
   borderRadius: BOX.borderRadius,
   padding: BOX.padding,
-  width: "75%",
-  minHeight: "650px",
+  width: DASH.width,
+  minHeight: DASH.minHeight,
   margin: "auto",
 };
 

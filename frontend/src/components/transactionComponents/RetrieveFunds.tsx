@@ -77,8 +77,8 @@ const RetrieveFunds: FC<RetrieveFundsProps> = (props) => {
     <>
       <Button
         primary
-        label={status != "claiming" ? getLabel() : "Claiming..."}
-        disabled={(!won && !payedOut) || status == "claiming"}
+        label={status !== "claiming" ? getLabel() : "Claiming..."}
+        disabled={(!won && !payedOut) || status === "claiming"}
         size='small'
         onClick={claimWinnings}
       />

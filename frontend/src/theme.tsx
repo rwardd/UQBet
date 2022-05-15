@@ -15,6 +15,11 @@ export const BOX = {
   padding: 40,
 };
 
+export const DASH = {
+  width: "1000px",
+  minHeight: "650px",
+};
+
 export const theme = {
   global: {
     colors: {

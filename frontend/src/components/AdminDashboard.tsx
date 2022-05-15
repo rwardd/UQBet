@@ -1,7 +1,7 @@
 import { Button } from "grommet";
 import React, { FC } from "react";
 import { Link } from "react-router-dom";
-import { BOX, COLORS } from "../theme";
+import { BOX, COLORS, DASH } from "../theme";
 import GetFixtures from "./viewComponents/GetFixtures";
 
 const AdminDashboard: FC = () => {
@@ -24,7 +24,8 @@ const adminDashboardStyle: React.CSSProperties = {
   backgroundColor: "white",
   borderRadius: BOX.borderRadius,
   padding: BOX.padding,
-  width: "75%",
+  width: DASH.width,
+  minHeight: DASH.minHeight,
   margin: "auto",
 };
 
