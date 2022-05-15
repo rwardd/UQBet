@@ -14,13 +14,11 @@ import AdminFixtureControls from "../AdminFixtureControls";
 import FixtureControls from "../FixtureControls";
 
 interface GetFixturesProps {
-  getSelectOption?: boolean;
   admin?: boolean;
-  setSelectedFixture?: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const GetFixtures: FC<GetFixturesProps> = (props) => {
-  const { getSelectOption, setSelectedFixture, admin } = props;
+  const { admin } = props;
   const { bettingContract } = useContext(GlobalState);
   const [fixtures, setFixtures] = useState<any[]>([]);
   const hasFetchedData = useRef(false);
@@ -81,8 +79,8 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
 
   function tableHeader() {
     let columns = ["Home", "Away", "Date"];
-    if (getSelectOption) {
-      columns.push("Select");
+    if (!admin) {
+      columns.push("Bet");
     }
     if (admin) {
       columns.push("Controls");

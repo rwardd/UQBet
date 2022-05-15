@@ -10,39 +10,7 @@ import ActiveBets from "./ActiveBets";
 
 const UQBetDashboard: FC = () => {
   const { bettingContract } = useContext(GlobalState);
-
-  const [homeTeamBet, setHomeTeamBet] = useState(0);
-  const [awayTeamBet, setAwayTeamBet] = useState(0);
-  const [selectedFixture, setSelectedFixture] = useState<null | Fixture>(null);
   const [userBets, refresh] = GetBets();
-
-  async function submitHomeTeamBet(event: any) {
-    event.preventDefault();
-    if (!bettingContract) {
-      throw new Error("Betting Contract not available");
-    } else {
-      await bettingContract.placeBet(
-        selectedFixture?.fixId,
-        selectedFixture?.home,
-        ethers.utils.parseEther(homeTeamBet.toString()),
-        { value: ethers.utils.parseEther(homeTeamBet.toString()) }
-      );
-    }
-  }
-
-  async function submitAwayTeamBet(event: any) {
-    event.preventDefault();
-    if (!bettingContract) {
-      throw new Error("Betting Contract not available");
-    } else {
-      await bettingContract.placeBet(
-        selectedFixture?.fixId,
-        selectedFixture?.away,
-        ethers.utils.parseEther(awayTeamBet.toString()),
-        { value: ethers.utils.parseEther(awayTeamBet.toString()) }
-      );
-    }
-  }
 
   return (
     <div style={betSlipStyling}>
@@ -63,16 +31,12 @@ const UQBetDashboard: FC = () => {
             background={value.color}
             fill
           >
-            {/* <Text size='large'>Your mum</Text> */}
             {value.value == 50 && (
               <>
                 <Heading margin={{ bottom: "small" }} level='3'>
                   Fixtures
                 </Heading>
-                <GetFixtures
-                  getSelectOption
-                  setSelectedFixture={setSelectedFixture}
-                />
+                <GetFixtures />
               </>
             )}
             {value.value == 20 && (
@@ -94,32 +58,6 @@ const UQBetDashboard: FC = () => {
           </Box>
         )}
       </Distribution>
-      {/* <h3>Home Team: {selectedFixture && selectedFixture.home}</h3>
-      <h3>Total Amount: x ETH</h3>
-      <form onSubmit={submitHomeTeamBet}>
-        <label>
-          Enter an amount to bid:
-          <input
-            type='number'
-            value={homeTeamBet}
-            onChange={(e) => setHomeTeamBet(parseInt(e.target.value))}
-          />
-          <button>Submit</button>
-        </label>
-      </form>
-      <br />
-      <h3>Away Team: {selectedFixture && selectedFixture.away}</h3>
-      <form onSubmit={submitAwayTeamBet}>
-        <label>
-          Enter an amount to bid:
-          <input
-            type='number'
-            value={awayTeamBet}
-            onChange={(e) => setAwayTeamBet(parseInt(e.target.value))}
-          />
-          <button>Submit</button>
-        </label>
-      </form> */}
     </div>
   );
 };
@@ -130,7 +68,7 @@ const betSlipStyling: React.CSSProperties = {
   borderRadius: BOX.borderRadius,
   padding: BOX.padding,
   width: "75%",
-  height: "650px",
+  minHeight: "650px",
   margin: "auto",
 };
 

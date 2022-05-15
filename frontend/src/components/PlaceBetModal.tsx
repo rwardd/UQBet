@@ -1,8 +1,8 @@
 import { Box, Text, Layer, NameValueList, NameValuePair } from "grommet";
-import { Grommet } from "grommet-icons";
 import React, { FC } from "react";
 import { BOX, COLORS } from "../theme";
 import { Fixture } from "../types";
+import PlaceBet from "./transactionComponents/PlaceBet";
 
 interface PlaceBetModalProps {
   show: boolean;
@@ -45,6 +45,12 @@ const PlaceBetModal: FC<PlaceBetModalProps> = (props) => {
         >
           <h3 style={titleStyling}>Place bet</h3>
           {fixtureDetails()}
+          <PlaceBet
+            home={home}
+            away={away}
+            fixtureID={fixId}
+            setShow={setShow}
+          />
         </Layer>
       )}
     </Box>
