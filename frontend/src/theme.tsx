@@ -31,5 +31,8 @@ export const theme = {
         color: COLORS.green,
       },
     },
+    tag: {
+      seperator: "",
+    },
   },
 };

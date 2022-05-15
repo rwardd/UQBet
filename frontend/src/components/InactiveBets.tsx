@@ -1,63 +1,80 @@
 import { ethers } from "ethers";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "grommet";
+import { Checkmark, Clear } from "grommet-icons";
 import React, { FC } from "react";
 import { Bet } from "../types";
 
-// interface InactiveBetsProps {
-//   userBets: Bet[];
-// }
+interface InactiveBetsProps {
+  userBets: Bet[];
+}
 
-// const ActiveBets: FC<InactiveBetsProps> = (props) => {
-//   const { userBets } = props;
+const InactiveBets: FC<InactiveBetsProps> = (props) => {
+  const { userBets } = props;
 
-//   function tableData() {
-//     const betData = userBets.map((bet: Bet) => {
-//       const { betId, team, amount, won } = bet;
-//       const formattedAmount = ethers.utils.formatEther(amount);
-//       return (
-//         <TableRow key={betId.toString()}>
-//           <TableCell>{team}</TableCell>
-//           <TableCell>{formattedAmount}</TableCell>
-//           <TableCell>{won.toString()}</TableCell>
-//         </TableRow>
-//       );
-//     });
+  const inactiveBets = userBets.filter((bet) => bet.payedOut);
 
-//     return <TableBody>{betData}</TableBody>;
-//   }
+  function betStatus(won: boolean) {
+    if (won) {
+      return <Checkmark color='status-ok' />;
+    } else {
+      return <Clear color='status-error' />;
+    }
+  }
 
-//   function tableHeader() {
-//     let columns = ["Team", "Amount", "Won"];
+  function tableData() {
+    const betData = inactiveBets.map((bet: Bet) => {
+      const { betId, team, amount, won } = bet;
 
-//     const tableCells = columns.map((columnTitle) => {
-//       return (
-//         <TableCell scope='col' border='bottom' key={columnTitle}>
-//           {columnTitle}
-//         </TableCell>
-//       );
-//     });
+      const formattedAmount = ethers.utils.formatEther(amount);
 
-//     return (
-//       <TableHeader>
-//         <TableRow>{tableCells}</TableRow>
-//       </TableHeader>
-//     );
-//   }
+      return (
+        <TableRow key={betId.toString()}>
+          <TableCell>{team}</TableCell>
+          <TableCell>{formattedAmount}</TableCell>
+          <TableCell style={{ alignItems: "center" }}>
+            {betStatus(won)}
+          </TableCell>
+        </TableRow>
+      );
+    });
 
-//   function table() {
-//     return (
-//       <Table>
-//         {tableHeader()}
-//         {tableData()}
-//       </Table>
-//     );
-//   }
+    return <TableBody>{betData}</TableBody>;
+  }
 
-//   return (
-//     <div style={{ marginBottom: "15px" }}>
-//       {userBets.length === 0 ? "You don't have any inactive bets" : table()}
-//     </div>
-//   );
-// };
+  function tableHeader() {
+    let columns = ["Team", "Amount", "Result"];
 
-// export default ActiveBets;
+    const tableCells = columns.map((columnTitle) => {
+      return (
+        <TableCell scope='col' border='bottom' key={columnTitle}>
+          {columnTitle}
+        </TableCell>
+      );
+    });
+
+    return (
+      <TableHeader>
+        <TableRow>{tableCells}</TableRow>
+      </TableHeader>
+    );
+  }
+
+  function table() {
+    return (
+      <Table>
+        {tableHeader()}
+        {tableData()}
+      </Table>
+    );
+  }
+
+  return (
+    <div style={{ marginBottom: "15px" }}>
+      {inactiveBets.length === 0
+        ? "You don't have any completed bets"
+        : table()}
+    </div>
+  );
+};
+
+export default InactiveBets;
