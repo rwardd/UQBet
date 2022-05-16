@@ -192,7 +192,7 @@ contract BetContract {
         locked = false;
     }
 
-    function getBettingOdds(uint256 fixtureId ) private view returns (BettingOdds memory) {
+    function getBettingOdds(uint256 fixtureId) public view returns (BettingOdds memory) {
         uint256 home = 0;
         uint256 away = 0;
 
