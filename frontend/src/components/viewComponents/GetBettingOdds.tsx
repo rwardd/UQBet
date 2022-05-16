@@ -32,7 +32,7 @@ const GetOdds: FC<GetOddsProps> = (props) => {
     return { homeBets: _home / gcd, awayBets: _away / gcd };
   }
 
-  async function _getBettingOdds() {
+  async function _getBettingTotals() {
     if (!bettingContract) {
       throw new Error("Betting Contract not available");
     } else {
@@ -50,7 +50,7 @@ const GetOdds: FC<GetOddsProps> = (props) => {
 
   useEffect(() => {
     // Refresh every second
-    const interval = setInterval(() => _getBettingOdds(), 1000);
+    const interval = setInterval(() => _getBettingTotals(), 1000);
     return () => {
       clearInterval(interval);
     };

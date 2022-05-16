@@ -19,13 +19,13 @@ contract BetContract {
         address punter; // we are going to assume that only EOA wallets can be punters
         string team;
         uint256 amount;
-        bool won;
+        int256 payOut;
         bool payedOut;
     }
 
-    struct BettingOdds {
-        uint256 homeBets;
-        uint256 awayBets;
+    struct BettingTotals {
+        uint256 home;
+        uint256 away;
     }
 
     address public owner;
@@ -138,7 +138,6 @@ contract BetContract {
         newBet.betId = (betCounter);
         newBet.punter = a;
         newBet.team = team;
-        newBet.won = false;
         newBet.amount = amount;
 
         allBets[betCounter] = newBet;
@@ -163,36 +162,20 @@ contract BetContract {
             allBets[betId].payedOut == false,
             "Bet has already been payed out"
         );
-        require(allBets[betId].won == true, "This bet has not been won");
+        require(allBets[betId].payOut <= 0, "This bet has not been won");
         require(
             allBets[betId].punter == msg.sender,
             "Not the owner of this bet"
         );
 
         locked = true;
-        if (fixtures[allBets[betId].fixId].invalidated == true) {
-            console.log("in here", 1);
-            (bool success, ) = allBets[betId].punter.call{
-                value: allBets[betId].amount
-            }("");
-            require(success, "Failed to withdraw winnings");
-            allBets[betId].payedOut = true;
-        } else {
-            uint256 losersTotal = calculateLosersTotal(allBets[betId].fixId);
-            losersTotal = losersTotal - ((losersTotal / 100) * uqSportsCut); //10% stays for uq
-            uint256 winnersTotal = calculateWinnersTotal(allBets[betId].fixId);
-            uint256 amountBet = allBets[betId].amount;
-            uint256 payout = amountBet +
-                ((((amountBet * 100) / winnersTotal) * losersTotal) / 100);
-
-            (bool success, ) = allBets[betId].punter.call{value: payout}("");
-            require(success, "Failed to withdraw winnings");
-            allBets[betId].payedOut = true;
-        }
+        (bool success, ) = allBets[betId].punter.call{value: uint256(allBets[betId].payOut)}("");
+        require(success, "Failed to withdraw winnings");
+        allBets[betId].payedOut = true;
         locked = false;
     }
 
-    function getBettingOdds(uint256 fixtureId) public view returns (BettingOdds memory) {
+    function getBettingTotals(uint256 fixtureId) public view returns (BettingTotals memory) {
         uint256 home = 0;
         uint256 away = 0;
 
@@ -205,41 +188,11 @@ contract BetContract {
             }
         }
 
-        BettingOdds memory odds;
-        odds.homeBets = home;
-        odds.awayBets = away;
+        BettingTotals memory totals;
+        totals.home = home;
+        totals.away = away;
 
-        return odds;
-    }
- 
-    function calculateLosersTotal(uint256 fixtureId)
-        private
-        view
-        returns (uint256)
-    {
-        uint256 loserSum = 0;
-
-        for (uint256 i = 0; i < fixtures[fixtureId].bets.length; i++) {
-            if (allBets[fixtures[fixtureId].bets[i]].won == false) {
-                loserSum += allBets[fixtures[fixtureId].bets[i]].amount;
-            }
-        }
-        return loserSum;
-    }
-
-    function calculateWinnersTotal(uint256 fixtureId)
-        private
-        view
-        returns (uint256)
-    {
-        uint256 winnerSum = 0;
-
-        for (uint256 i = 0; i < fixtures[fixtureId].bets.length; i++) {
-            if (allBets[fixtures[fixtureId].bets[i]].won == true) {
-                winnerSum += allBets[fixtures[fixtureId].bets[i]].amount;
-            }
-        }
-        return winnerSum;
+        return totals;
     }
 
     function setWinner(uint256 fixtureId, string memory winner) public {
@@ -247,18 +200,33 @@ contract BetContract {
             msg.sender == owner,
             "Only UQ Sports Administration can set the winner"
         );
-
+        // Set Fixture as inactive
         fixtures[fixtureId].active = false;
+
+        // Calculate winner and loser totals
+        uint256 losersTotal;
+        uint256 winnersTotal;
+        BettingTotals memory totals = getBettingTotals(fixtureId);
+        if (keccak256(abi.encodePacked(fixtures[fixtureId].home)) == keccak256(abi.encodePacked((winner)))) {
+            // Home Winner
+            losersTotal = (totals.away / 100) * uqSportsCut;
+            winnersTotal = totals.home;
+        } else {
+            // Away winner
+            losersTotal = (totals.home / 100) * uqSportsCut;
+            winnersTotal = totals.away;
+        }
+
+        // Set bet payouts
         for (uint256 i = 0; i < fixtures[fixtureId].bets.length; i++) {
-            if (
-                keccak256(
-                    abi.encodePacked(
-                        (allBets[fixtures[fixtureId].bets[i]].team)
-                    )
-                ) == keccak256(abi.encodePacked((winner)))
-            ) {
-                allBets[fixtures[fixtureId].bets[i]].won = true;
+            if (keccak256(abi.encodePacked((allBets[fixtures[fixtureId].bets[i]].team))) == keccak256(abi.encodePacked((winner)))) {
+                // Winner
+                uint256 amountBet = allBets[fixtures[fixtureId].bets[i]].amount;
+                uint256 payOut = amountBet + ((((amountBet * 100) / winnersTotal) * losersTotal) / 100);
+                allBets[fixtures[fixtureId].bets[i]].payOut = int(payOut);
             } else {
+                // Loser
+                allBets[fixtures[fixtureId].bets[i]].payOut = - int(allBets[fixtures[fixtureId].bets[i]].amount);
                 allBets[fixtures[fixtureId].bets[i]].payedOut = true;
             }
         }
@@ -273,7 +241,7 @@ contract BetContract {
         fixtures[fixtureId].invalidated = true;
         fixtures[fixtureId].active = false;
         for (uint256 i = 0; i < fixtures[fixtureId].bets.length; i++) {
-            allBets[fixtures[fixtureId].bets[i]].won = true;
+            allBets[fixtures[fixtureId].bets[i]].payOut = int256(allBets[fixtures[fixtureId].bets[i]].amount);
         }
     }
 
