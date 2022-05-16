@@ -23,6 +23,11 @@ contract BetContract {
         bool payedOut;
     }
 
+    struct BettingOdds {
+        uint256 homeBets;
+        uint256 awayBets;
+    }
+
     address public owner;
     uint256 fixtureCounter;
     uint256 betCounter;
@@ -187,6 +192,26 @@ contract BetContract {
         locked = false;
     }
 
+    function getBettingOdds(uint256 fixtureId ) private view returns (BettingOdds memory) {
+        uint256 home = 0;
+        uint256 away = 0;
+
+        for (uint256 i = 0; i < fixtures[fixtureId].bets.length; i++) {
+            if (keccak256(abi.encodePacked((allBets[fixtures[fixtureId].bets[i]].team))) ==
+                keccak256(abi.encodePacked(fixtures[fixtureId].home))) {
+                home += allBets[fixtures[fixtureId].bets[i]].amount;
+            } else {
+                away += allBets[fixtures[fixtureId].bets[i]].amount;
+            }
+        }
+
+        BettingOdds memory odds;
+        odds.homeBets = home;
+        odds.awayBets = away;
+
+        return odds;
+    }
+ 
     function calculateLosersTotal(uint256 fixtureId)
         private
         view
