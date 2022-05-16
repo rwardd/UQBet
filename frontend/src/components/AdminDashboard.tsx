@@ -3,6 +3,7 @@ import React, { FC } from "react";
 import { Link } from "react-router-dom";
 import { BOX, COLORS, DASH } from "../theme";
 import GetFixtures from "./viewComponents/GetFixtures";
+import TakeEarnings from "./utils/TakeEarnings";
 
 const AdminDashboard: FC = () => {
   return (
@@ -13,6 +14,7 @@ const AdminDashboard: FC = () => {
           <Button primary label='Add Fixture' />
         </Link>
       </div>
+      <TakeEarnings style={{float: "right"}} />
       <br />
       <GetFixtures admin />
     </div>

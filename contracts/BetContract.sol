@@ -259,4 +259,35 @@ contract BetContract {
     fallback() external payable {
         //do nothing
     }
+
+    function takeEarnings() public onlyOwner {
+        uint256 amount = address(this).balance;
+        bool fixturesActive = false;
+        bool allBetsPaid = true;
+        for (uint256 i = 0; i < fixtureCounter; i++) {
+            if (fixtures[i].active == true) {
+                fixturesActive = true;
+            }
+        }
+        for (uint256 i = 0; i < betCounter; i++) {
+            if (allBets[i].payedOut == false) {
+                allBetsPaid = false;
+            }
+        }
+        require(
+            fixturesActive == false,
+            "There is still a fixture in play, cannot withdraw funds"
+        );
+        require(
+            allBetsPaid,
+            "There are still unpaid bets, wait until all bets have been claimed"
+        );
+        (bool success, ) = owner.call{value: amount}("");
+        require(success, "Fail in transferring funds to UQ admin");
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only UQ admin can call this function");
+        _;
+    }
 }
