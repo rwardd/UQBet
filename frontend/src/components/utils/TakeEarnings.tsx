@@ -52,6 +52,7 @@ const TakeEarnings: FC<TakeEarningsProps> = (props) => {
       setStatus("error");
       if (err instanceof Error) {
         setError(err);
+        console.error(status);
         console.error(error);
       }
     }

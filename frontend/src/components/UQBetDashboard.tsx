@@ -33,6 +33,7 @@ const UQBetDashboard: FC = () => {
             }}
             background={value.color}
             fill={true}
+            overflow='scroll'
           >
             {value.value === 50 && (
               <>

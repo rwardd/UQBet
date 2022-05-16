@@ -21,3 +21,8 @@ export type Bet = {
   won: boolean;
   payedOut: boolean;
 };
+
+export type BettingOdds = {
+  homeBets: Number;
+  awayBets: Number;
+};

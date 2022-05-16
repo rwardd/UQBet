@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableHeader, TableRow } from "grommet";
 import React, { FC } from "react";
 import { Bet } from "../types";
 import RetrieveFunds from "./transactionComponents/RetrieveFunds";
+import GetOdds from "./viewComponents/GetBettingOdds";
 
 interface ActiveBetsProps {
   userBets: Bet[];
@@ -16,7 +17,7 @@ const ActiveBets: FC<ActiveBetsProps> = (props) => {
 
   function tableData() {
     const betData = filteredActiveBets.map((bet: Bet) => {
-      const { betId, team, amount } = bet;
+      const { betId, team, amount, fixId } = bet;
 
       const formattedAmount = ethers.utils.formatEther(amount);
 
@@ -24,6 +25,9 @@ const ActiveBets: FC<ActiveBetsProps> = (props) => {
         <TableRow key={betId.toString()}>
           <TableCell>{team}</TableCell>
           <TableCell>{formattedAmount}</TableCell>
+          <TableCell>
+            <GetOdds fixtureId={fixId} />
+          </TableCell>
           <TableCell>
             <RetrieveFunds bet={bet} refreshBets={refreshBets} />
           </TableCell>
@@ -35,7 +39,7 @@ const ActiveBets: FC<ActiveBetsProps> = (props) => {
   }
 
   function tableHeader() {
-    let columns = ["Team", "Amount", "Result"];
+    let columns = ["Team", "Amount", "Odds", "Result"];
 
     const tableCells = columns.map((columnTitle) => {
       return (

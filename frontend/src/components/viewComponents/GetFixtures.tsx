@@ -4,6 +4,7 @@ import { GlobalState } from "../../globalState";
 import { Fixture } from "../../types";
 import AdminFixtureControls from "../AdminFixtureControls";
 import FixtureControls from "../FixtureControls";
+import GetOdds from "./GetBettingOdds";
 
 interface GetFixturesProps {
   admin?: boolean;
@@ -47,6 +48,9 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
           <TableCell>{home}</TableCell>
           <TableCell>{away}</TableCell>
           <TableCell>{date}</TableCell>
+          <TableCell>
+            <GetOdds fixtureId={fixId} />
+          </TableCell>
           {!admin && refreshBets && (
             <TableCell>
               <FixtureControls fixture={fixture} refreshBets={refreshBets} />
@@ -68,7 +72,7 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
   }
 
   function tableHeader() {
-    let columns = ["Home", "Away", "Date"];
+    let columns = ["Home", "Away", "Date", "Odds"];
     if (!admin) {
       columns.push("Bet");
     }
