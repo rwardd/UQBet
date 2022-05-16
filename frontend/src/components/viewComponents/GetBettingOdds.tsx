@@ -1,4 +1,4 @@
-import { BigNumber } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { Spinner } from "grommet";
 import React, { useContext, useEffect, useState, FC } from "react";
 import { GlobalState } from "../../globalState";
@@ -12,20 +12,24 @@ const GetOdds: FC<GetOddsProps> = (props) => {
   const { bettingContract } = useContext(GlobalState);
   const [odds, setOdds] = useState<undefined | BettingOdds>(undefined);
 
+  /**
+   * This funciton will try to reduce the odds down to the simplest fraction.
+   *
+   * This calculation get tricky with decimals so we have floored the value
+   * of the bets first. This will mean that the odds are always under estimated.
+   */
   function processBettingOdds(home: BigNumber, away: BigNumber): BettingOdds {
-    function greatestCommonDivisor(a: BigNumber, b: BigNumber): BigNumber {
-      return !b.isZero() ? greatestCommonDivisor(b, a.mod(b)) : a;
+    function greatestCommonDivisor(a: number, b: number): number {
+      return b !== 0 ? greatestCommonDivisor(b, a % b) : a;
     }
 
-    console.log(home.isZero(), away.isZero());
-    const gcd =
-      home.isZero() || away.isZero()
-        ? BigNumber.from(1)
-        : greatestCommonDivisor(home, away);
-    const _home = home.div(gcd).toNumber();
-    const _away = away.div(gcd).toNumber();
+    const _home = Math.floor(Number(ethers.utils.formatEther(home)));
+    const _away = Math.floor(Number(ethers.utils.formatEther(away)));
 
-    return { homeBets: _home, awayBets: _away };
+    const gcd =
+      _home === 0 || _away === 0 ? 1 : greatestCommonDivisor(_home, _away);
+
+    return { homeBets: _home / gcd, awayBets: _away / gcd };
   }
 
   async function _getBettingOdds() {
