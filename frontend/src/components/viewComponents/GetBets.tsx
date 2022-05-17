@@ -3,12 +3,12 @@ import { REFRESH_RATE } from "../../constants";
 import { GlobalState } from "../../globalState";
 import { Bet } from "../../types";
 
-type BetsHook = [bets: Bet[], refresh: () => void];
+type BetsHook = [bets: Bet[] | null, refresh: () => void];
 
 // Returns a hook that returns bets and refresh function
 const GetBets = (): BetsHook => {
   const { bettingContract } = useContext(GlobalState);
-  const [userBets, setUserBets] = useState<any[]>([]);
+  const [userBets, setUserBets] = useState<any[] | null>(null);
 
   async function _getUserBets() {
     if (!bettingContract) {

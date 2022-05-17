@@ -1,22 +1,29 @@
 import { ethers } from "ethers";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "grommet";
+import {
+  Spinner,
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "grommet";
 import React, { FC } from "react";
 import { Bet } from "../types";
 import RetrieveFunds from "./transactionComponents/RetrieveFunds";
 import { GetPotentialEarnings } from "./viewComponents/GetBettingTotals";
 
 interface ActiveBetsProps {
-  userBets: Bet[];
+  userBets: Bet[] | null;
   refreshBets: () => void;
 }
 
 const ActiveBets: FC<ActiveBetsProps> = (props) => {
   const { userBets, refreshBets } = props;
 
-  const filteredActiveBets = userBets.filter((bet) => !bet.payedOut);
+  const filteredActiveBets = userBets?.filter((bet) => !bet.payedOut);
 
   function tableData() {
-    const betData = filteredActiveBets.map((bet: Bet) => {
+    const betData = filteredActiveBets?.map((bet: Bet) => {
       const { betId, team, amount, fixId } = bet;
 
       const formattedAmount = ethers.utils.formatEther(amount);
@@ -67,10 +74,22 @@ const ActiveBets: FC<ActiveBetsProps> = (props) => {
     );
   }
 
+  if (userBets === null) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <Spinner size='xlarge' />
+      </div>
+    );
+  }
   return (
     <div style={{ marginBottom: "15px" }}>
-      {filteredActiveBets.length === 0
-        ? "You don't have any actve bets"
+      {filteredActiveBets?.length === 0
+        ? "You don't have any active bets"
         : table()}
     </div>
   );

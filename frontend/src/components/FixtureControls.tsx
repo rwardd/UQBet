@@ -16,9 +16,11 @@ const FixtureControls: FC<FixtureControlProps> = (props) => {
     if (fixture.active) {
       return "Place bet";
     }
-
+    if (fixture.invalidated) {
+      return "Invalidated";
+    }
     if (!fixture.active) {
-      return "Finished";
+      return `${fixture.winner} won`;
     }
 
     return "Error";

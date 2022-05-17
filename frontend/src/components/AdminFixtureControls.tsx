@@ -22,7 +22,7 @@ const AdmimFixtureControls: FC<AdminFixtureControlProps> = (props) => {
     }
 
     if (!fixture.active) {
-      return `${fixture.winner}  won`;
+      return `${fixture.winner} won`;
     }
 
     return "Error";

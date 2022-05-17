@@ -1,4 +1,11 @@
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "grommet";
+import {
+  Spinner,
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "grommet";
 import React, { FC, useContext, useEffect, useState } from "react";
 import { REFRESH_RATE } from "../../constants";
 import { GlobalState } from "../../globalState";
@@ -15,7 +22,7 @@ interface GetFixturesProps {
 const GetFixtures: FC<GetFixturesProps> = (props) => {
   const { admin, refreshBets } = props;
   const { bettingContract } = useContext(GlobalState);
-  const [fixtures, setFixtures] = useState<any[]>([]);
+  const [fixtures, setFixtures] = useState<null | any[]>(null);
 
   async function _getFixtures() {
     if (!bettingContract) {
@@ -41,7 +48,7 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
   });
 
   function tableData() {
-    const fixtureData = fixtures.map((fixture: Fixture) => {
+    const fixtureData = fixtures?.map((fixture: Fixture) => {
       const { fixId, home, away, date } = fixture;
       return (
         <TableRow key={fixId.toString()}>
@@ -106,6 +113,18 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
     );
   }
 
+  if (fixtures === null) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <Spinner size='xlarge' />
+      </div>
+    );
+  }
   return (
     <div>
       {fixtures.length === 0 ? "There are currently no fixtures" : table()}

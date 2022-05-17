@@ -1,5 +1,6 @@
 import { BigNumber, ethers } from "ethers";
 import {
+  Spinner,
   Table,
   TableBody,
   TableCell,
@@ -12,13 +13,13 @@ import React, { FC } from "react";
 import { Bet } from "../types";
 
 interface InactiveBetsProps {
-  userBets: Bet[];
+  userBets: Bet[] | null;
 }
 
 const InactiveBets: FC<InactiveBetsProps> = (props) => {
   const { userBets } = props;
 
-  const inactiveBets = userBets.filter((bet) => bet.payedOut);
+  const inactiveBets = userBets?.filter((bet) => bet.payedOut);
 
   function betStatus(won: boolean, invalidated: boolean) {
     if (won && !invalidated) {
@@ -57,7 +58,7 @@ const InactiveBets: FC<InactiveBetsProps> = (props) => {
   }
 
   function tableData() {
-    const betData = inactiveBets.map((bet: Bet) => {
+    const betData = inactiveBets?.map((bet: Bet) => {
       const { betId, team, amount, invalidated, payOut } = bet;
 
       const won = !invalidated && payOut.gt(0) ? true : false;
@@ -109,9 +110,21 @@ const InactiveBets: FC<InactiveBetsProps> = (props) => {
     );
   }
 
+  if (userBets === null) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
+        <Spinner size='xlarge' />
+      </div>
+    );
+  }
   return (
     <div style={{ marginBottom: "15px" }}>
-      {inactiveBets.length === 0
+      {inactiveBets?.length === 0
         ? "You don't have any completed bets"
         : table()}
     </div>
