@@ -1,5 +1,12 @@
-import { ethers } from "ethers";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "grommet";
+import { BigNumber, ethers } from "ethers";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+  Text,
+} from "grommet";
 import { Checkmark, Clear, Close } from "grommet-icons";
 import React, { FC } from "react";
 import { Bet } from "../types";
@@ -12,29 +19,59 @@ const InactiveBets: FC<InactiveBetsProps> = (props) => {
   const { userBets } = props;
 
   const inactiveBets = userBets.filter((bet) => bet.payedOut);
-  console.log(inactiveBets);
+
   function betStatus(won: boolean, invalidated: boolean) {
     if (won && !invalidated) {
       return <Checkmark color='status-ok' />;
-    } else if (!won) {
-      return <Close color='status-error' />;
-    } else {
+    } else if (invalidated) {
       return <Clear color='status-warning' />;
+    } else {
+      return <Close color='status-error' />;
+    }
+  }
+
+  function getPayOut(won: boolean, invalidated: boolean, payOut: BigNumber) {
+    const formattedPayOut = Number(ethers.utils.formatEther(payOut)).toFixed(1);
+
+    if (won && !invalidated) {
+      return (
+        <Text
+          color='status-ok'
+          weight='bold'
+        >{`+${formattedPayOut} ETH Won`}</Text>
+      );
+    } else if (invalidated) {
+      return (
+        <Text color='status-warning' weight='bold'>
+          Invalidated
+        </Text>
+      );
+    } else {
+      return (
+        <Text
+          color='status-error'
+          weight='bold'
+        >{`${formattedPayOut} ETH Lost`}</Text>
+      );
     }
   }
 
   function tableData() {
     const betData = inactiveBets.map((bet: Bet) => {
-      const { betId, team, amount, won, invalidated } = bet;
+      const { betId, team, amount, invalidated, payOut } = bet;
 
+      const won = !invalidated && payOut.gt(0) ? true : false;
       const formattedAmount = ethers.utils.formatEther(amount);
 
       return (
         <TableRow key={betId.toString()}>
           <TableCell>{team}</TableCell>
-          <TableCell>{formattedAmount}</TableCell>
           <TableCell style={{ alignItems: "center" }}>
             {betStatus(won, invalidated)}
+          </TableCell>
+          <TableCell align='center'>{formattedAmount}</TableCell>
+          <TableCell align='center'>
+            {getPayOut(won, invalidated, payOut)}
           </TableCell>
         </TableRow>
       );
@@ -44,11 +81,13 @@ const InactiveBets: FC<InactiveBetsProps> = (props) => {
   }
 
   function tableHeader() {
-    let columns = ["Team", "Amount", "Result"];
+    let columns = ["Team", "Result", "Amount", "Payout"];
 
     const tableCells = columns.map((columnTitle) => {
+      const align = columnTitle === columns[0] ? "left" : "center";
+
       return (
-        <TableCell scope='col' border='bottom' key={columnTitle}>
+        <TableCell scope='col' border='bottom' key={columnTitle} align={align}>
           {columnTitle}
         </TableCell>
       );

@@ -22,19 +22,19 @@ const AdmimFixtureControls: FC<AdminFixtureControlProps> = (props) => {
     }
 
     if (!fixture.active) {
-      return "Won: " + fixture.winner;
+      return `${fixture.winner}  won`;
     }
 
     return "Error";
   }
 
   return (
-    <>
+    <div>
       <Button
         primary
         label={getLabel()}
         disabled={!fixture.active}
-        size="small"
+        size='small'
         onClick={() => setShowModal(true)}
       />
       {fixture.active && (
@@ -45,7 +45,7 @@ const AdmimFixtureControls: FC<AdminFixtureControlProps> = (props) => {
           refreshFixtureData={refreshFixtureData}
         />
       )}
-    </>
+    </div>
   );
 };
 

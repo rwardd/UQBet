@@ -1,4 +1,5 @@
-import { useContext, useEffect, useState, useRef } from "react";
+import { useContext, useEffect, useState } from "react";
+import { REFRESH_RATE } from "../../constants";
 import { GlobalState } from "../../globalState";
 import { Bet } from "../../types";
 
@@ -8,7 +9,6 @@ type BetsHook = [bets: Bet[], refresh: () => void];
 const GetBets = (): BetsHook => {
   const { bettingContract } = useContext(GlobalState);
   const [userBets, setUserBets] = useState<any[]>([]);
-  const hasFetchedData = useRef(false);
 
   async function _getUserBets() {
     if (!bettingContract) {
@@ -26,10 +26,11 @@ const GetBets = (): BetsHook => {
   }
 
   useEffect(() => {
-    if (!hasFetchedData.current) {
-      _getUserBets();
-      hasFetchedData.current = true;
-    }
+    // Refresh every second
+    const interval = setInterval(() => _getUserBets(), REFRESH_RATE);
+    return () => {
+      clearInterval(interval);
+    };
   });
 
   return [userBets, _getUserBets];

@@ -19,9 +19,9 @@ export type Bet = {
   punter: string;
   team: string;
   amount: BigNumber;
-  won: boolean;
   invalidated: boolean;
   payedOut: boolean;
+  payOut: BigNumber;
 };
 
 export type BettingOdds = {

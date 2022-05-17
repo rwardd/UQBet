@@ -16,7 +16,7 @@ export const BOX = {
 };
 
 export const DASH = {
-  width: "1150px",
+  width: "1200px",
   minHeight: "650px",
 };
 

@@ -1,10 +1,11 @@
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "grommet";
-import React, { FC, useContext, useEffect, useState, useRef } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
+import { REFRESH_RATE } from "../../constants";
 import { GlobalState } from "../../globalState";
 import { Fixture } from "../../types";
 import AdminFixtureControls from "../AdminFixtureControls";
 import FixtureControls from "../FixtureControls";
-import GetOdds from "./GetBettingOdds";
+import { GetOdds } from "./GetBettingTotals";
 
 interface GetFixturesProps {
   admin?: boolean;
@@ -15,7 +16,6 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
   const { admin, refreshBets } = props;
   const { bettingContract } = useContext(GlobalState);
   const [fixtures, setFixtures] = useState<any[]>([]);
-  const hasFetchedData = useRef(false);
 
   async function _getFixtures() {
     if (!bettingContract) {
@@ -33,11 +33,11 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
   }
 
   useEffect(() => {
-    if (!hasFetchedData.current) {
-      // Fetch Data
-      _getFixtures();
-      hasFetchedData.current = true;
-    }
+    // Refresh every second
+    const interval = setInterval(() => _getFixtures(), REFRESH_RATE);
+    return () => {
+      clearInterval(interval);
+    };
   });
 
   function tableData() {
@@ -46,18 +46,18 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
       return (
         <TableRow key={fixId.toString()}>
           <TableCell>{home}</TableCell>
-          <TableCell>{away}</TableCell>
-          <TableCell>{date}</TableCell>
-          <TableCell>
+          <TableCell align='center'>{away}</TableCell>
+          <TableCell align='center'>{date}</TableCell>
+          <TableCell align='center'>
             <GetOdds fixtureId={fixId} />
           </TableCell>
           {!admin && refreshBets && (
-            <TableCell>
+            <TableCell align='center'>
               <FixtureControls fixture={fixture} refreshBets={refreshBets} />
             </TableCell>
           )}
           {admin && (
-            <TableCell>
+            <TableCell align='center'>
               <AdminFixtureControls
                 fixture={fixture}
                 refreshFixtureData={_getFixtures}
@@ -81,8 +81,10 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
     }
 
     const tableCells = columns.map((columnTitle) => {
+      const align = columnTitle === columns[0] ? "left" : "center";
+
       return (
-        <TableCell scope='col' border='bottom' key={columnTitle}>
+        <TableCell scope='col' border='bottom' key={columnTitle} align={align}>
           {columnTitle}
         </TableCell>
       );
