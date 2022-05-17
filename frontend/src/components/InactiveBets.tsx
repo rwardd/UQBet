@@ -1,5 +1,12 @@
-import { ethers } from "ethers";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "grommet";
+import { BigNumber, ethers } from "ethers";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+  Text,
+} from "grommet";
 import { Checkmark, Clear, Close } from "grommet-icons";
 import React, { FC } from "react";
 import { Bet } from "../types";
@@ -23,6 +30,32 @@ const InactiveBets: FC<InactiveBetsProps> = (props) => {
     }
   }
 
+  function getPayOut(won: boolean, invalidated: boolean, payOut: BigNumber) {
+    const formattedPayOut = ethers.utils.formatEther(payOut);
+
+    if (won && !invalidated) {
+      return (
+        <Text
+          color='status-ok'
+          weight='bold'
+        >{`+${formattedPayOut} ETH Won`}</Text>
+      );
+    } else if (invalidated) {
+      return (
+        <Text color='status-warning' weight='bold'>
+          Invalidated
+        </Text>
+      );
+    } else {
+      return (
+        <Text
+          color='status-error'
+          weight='bold'
+        >{`${formattedPayOut} ETH Lost`}</Text>
+      );
+    }
+  }
+
   function tableData() {
     const betData = inactiveBets.map((bet: Bet) => {
       const { betId, team, amount, invalidated, payOut } = bet;
@@ -33,9 +66,12 @@ const InactiveBets: FC<InactiveBetsProps> = (props) => {
       return (
         <TableRow key={betId.toString()}>
           <TableCell>{team}</TableCell>
-          <TableCell>{formattedAmount}</TableCell>
           <TableCell style={{ alignItems: "center" }}>
             {betStatus(won, invalidated)}
+          </TableCell>
+          <TableCell align='center'>{formattedAmount}</TableCell>
+          <TableCell align='center'>
+            {getPayOut(won, invalidated, payOut)}
           </TableCell>
         </TableRow>
       );
@@ -45,11 +81,13 @@ const InactiveBets: FC<InactiveBetsProps> = (props) => {
   }
 
   function tableHeader() {
-    let columns = ["Team", "Amount", "Result"];
+    let columns = ["Team", "Result", "Amount", "Payout"];
 
     const tableCells = columns.map((columnTitle) => {
+      const align = columnTitle === columns[0] ? "left" : "center";
+
       return (
-        <TableCell scope='col' border='bottom' key={columnTitle}>
+        <TableCell scope='col' border='bottom' key={columnTitle} align={align}>
           {columnTitle}
         </TableCell>
       );
