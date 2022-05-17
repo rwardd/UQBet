@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "grommet";
-import { Checkmark, Clear, Alert } from "grommet-icons";
+import { Checkmark, Clear, Close } from "grommet-icons";
 import React, { FC } from "react";
 import { Bet } from "../types";
 
@@ -15,11 +15,11 @@ const InactiveBets: FC<InactiveBetsProps> = (props) => {
   console.log(inactiveBets);
   function betStatus(won: boolean, invalidated: boolean) {
     if (won && !invalidated) {
-      return <Checkmark color="status-ok" />;
-    } else if (!won && !invalidated) {
-      return <Clear color="status-error" />;
+      return <Checkmark color='status-ok' />;
+    } else if (!won) {
+      return <Close color='status-error' />;
     } else {
-      return <Alert color="status-error" />;
+      return <Clear color='status-warning' />;
     }
   }
 
@@ -48,7 +48,7 @@ const InactiveBets: FC<InactiveBetsProps> = (props) => {
 
     const tableCells = columns.map((columnTitle) => {
       return (
-        <TableCell scope="col" border="bottom" key={columnTitle}>
+        <TableCell scope='col' border='bottom' key={columnTitle}>
           {columnTitle}
         </TableCell>
       );
