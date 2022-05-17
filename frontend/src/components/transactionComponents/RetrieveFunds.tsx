@@ -15,7 +15,7 @@ interface RetrieveFundsProps {
  */
 const RetrieveFunds: FC<RetrieveFundsProps> = (props) => {
   const { bet, refreshBets } = props;
-  const { payOut, betId } = bet;
+  const { payOut, betId, invalidated } = bet;
   const [error, setError] = useState<null | Error>(null);
   const [status, setStatus] = useState("doing nothing");
   const { setTransactionError, bettingContract, setTxBeingSet } =
@@ -50,10 +50,12 @@ const RetrieveFunds: FC<RetrieveFundsProps> = (props) => {
   };
 
   function getLabel(): string {
+    if (invalidated) {
+      return "Claim Refund";
+    }
     if (payOut.gt(0)) {
       return "Claim Winnings";
     }
-
     if (payOut.isZero()) {
       return "In Progress";
     }

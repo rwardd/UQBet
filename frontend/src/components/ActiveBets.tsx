@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHeader, TableRow } from "grommet";
 import React, { FC } from "react";
 import { Bet } from "../types";
 import RetrieveFunds from "./transactionComponents/RetrieveFunds";
-import { GetOdds } from "./viewComponents/GetBettingTotals";
+import { GetPotentialEarnings } from "./viewComponents/GetBettingTotals";
 
 interface ActiveBetsProps {
   userBets: Bet[];
@@ -26,7 +26,7 @@ const ActiveBets: FC<ActiveBetsProps> = (props) => {
           <TableCell>{team}</TableCell>
           <TableCell align='center'>{formattedAmount}</TableCell>
           <TableCell align='center'>
-            <GetOdds fixtureId={fixId} />
+            <GetPotentialEarnings fixtureId={fixId} bet={bet} />
           </TableCell>
           <TableCell align='center'>
             <RetrieveFunds bet={bet} refreshBets={refreshBets} />

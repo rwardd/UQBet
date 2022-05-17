@@ -31,7 +31,7 @@ const InactiveBets: FC<InactiveBetsProps> = (props) => {
   }
 
   function getPayOut(won: boolean, invalidated: boolean, payOut: BigNumber) {
-    const formattedPayOut = ethers.utils.formatEther(payOut);
+    const formattedPayOut = Number(ethers.utils.formatEther(payOut)).toFixed(1);
 
     if (won && !invalidated) {
       return (

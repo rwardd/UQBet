@@ -1,12 +1,21 @@
 import { BigNumber, ethers } from "ethers";
-import { Spinner } from "grommet";
+import { Spinner, Text } from "grommet";
 import React, { useContext, useEffect, useState, FC } from "react";
 import { REFRESH_RATE } from "../../constants";
 import { GlobalState } from "../../globalState";
-import { BettingOdds } from "../../types";
+import { Bet, BettingOdds } from "../../types";
+import {
+  calculatePotentialEarnings,
+  greatestCommonDivisor,
+} from "../utils/MathUtils";
 
 interface GetOddsProps {
   fixtureId: BigNumber;
+}
+
+interface GetPotentialEarningsProps {
+  fixtureId: BigNumber;
+  bet: Bet;
 }
 
 async function _getBettingTotals(
@@ -28,10 +37,6 @@ export const GetOdds: FC<GetOddsProps> = (props) => {
    * of the bets first. This will mean that the odds are always under estimated.
    */
   function processBettingOdds(home: BigNumber, away: BigNumber): BettingOdds {
-    function greatestCommonDivisor(a: number, b: number): number {
-      return b !== 0 ? greatestCommonDivisor(b, a % b) : a;
-    }
-
     const _home = Math.floor(Number(ethers.utils.formatEther(home)));
     const _away = Math.floor(Number(ethers.utils.formatEther(away)));
 
@@ -68,8 +73,97 @@ export const GetOdds: FC<GetOddsProps> = (props) => {
   });
 
   if (!odds) {
-    return <Spinner />;
+    return (
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Spinner />
+      </div>
+    );
   } else {
     return <div>{`${odds.homeBets}:${odds.awayBets}`}</div>;
+  }
+};
+
+export const GetPotentialEarnings: FC<GetPotentialEarningsProps> = (props) => {
+  const { fixtureId, bet } = props;
+  const { bettingContract } = useContext(GlobalState);
+  const [earnings, setEarnings] = useState<undefined | Number>(undefined);
+
+  useEffect(() => {
+    // Refresh every second
+    const interval = setInterval(() => estimateEarnings(), REFRESH_RATE);
+    return () => {
+      clearInterval(interval);
+    };
+  });
+
+  /**
+   * This function will try to estimate the earnings of a game
+   */
+  async function estimateEarnings() {
+    // Skip estimation if payOut is known
+    if (bet.invalidated) {
+      setEarnings(0);
+      return;
+    }
+    if (bet.payOut.isNegative()) {
+      setEarnings(Number(ethers.utils.formatEther(bet.amount)));
+      return;
+    }
+
+    // Get betting totals
+    let bettingTotals;
+    if (!bettingContract) {
+      throw new Error("Betting Contract not available");
+    } else {
+      bettingTotals = await _getBettingTotals(bettingContract, fixtureId);
+    }
+
+    // Calculate potential earnings
+    const potetialEarnings =
+      bet.team === (await bettingContract.getFixture(Number(bet.fixId))).home
+        ? calculatePotentialEarnings(
+            bettingTotals.home,
+            bettingTotals.away,
+            bet.amount
+          )
+        : calculatePotentialEarnings(
+            bettingTotals.away,
+            bettingTotals.home,
+            bet.amount
+          );
+
+    setEarnings(potetialEarnings);
+  }
+
+  function getDisplayOptions(earnings: Number): [color: string, sign: string] {
+    if (earnings > 0) {
+      return ["status-ok", "+"];
+    } else if (earnings === 0) {
+      return ["status-warning", ""];
+    } else {
+      return ["status-error", "-"];
+    }
+  }
+
+  if (earnings === undefined) {
+    return (
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <Spinner />
+      </div>
+    );
+  } else if (bet.invalidated) {
+    return (
+      <Text color='status-disabled' weight='bold'>
+        Bet invalidated
+      </Text>
+    );
+  } else {
+    const [color, sign] = getDisplayOptions(earnings);
+
+    return (
+      <Text color={color} weight='bold'>{`${sign}${earnings.toFixed(
+        1
+      )} ETH`}</Text>
+    );
   }
 };
