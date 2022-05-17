@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHeader, TableRow } from "grommet";
 import React, { FC } from "react";
 import { Bet } from "../types";
 import RetrieveFunds from "./transactionComponents/RetrieveFunds";
-import GetOdds from "./viewComponents/GetBettingOdds";
+import { GetOdds } from "./viewComponents/GetBettingTotals";
 
 interface ActiveBetsProps {
   userBets: Bet[];
@@ -39,7 +39,7 @@ const ActiveBets: FC<ActiveBetsProps> = (props) => {
   }
 
   function tableHeader() {
-    let columns = ["Team", "Amount", "Odds", "Result"];
+    let columns = ["Team", "Amount", "Potential Earnings", "Result"];
 
     const tableCells = columns.map((columnTitle) => {
       const align = columnTitle === columns[0] ? "left" : "center";

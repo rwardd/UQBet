@@ -5,7 +5,7 @@ import { GlobalState } from "../../globalState";
 import { Fixture } from "../../types";
 import AdminFixtureControls from "../AdminFixtureControls";
 import FixtureControls from "../FixtureControls";
-import GetOdds from "./GetBettingOdds";
+import { GetOdds } from "./GetBettingTotals";
 
 interface GetFixturesProps {
   admin?: boolean;

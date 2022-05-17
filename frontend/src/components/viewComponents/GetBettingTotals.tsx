@@ -8,13 +8,21 @@ import { BettingOdds } from "../../types";
 interface GetOddsProps {
   fixtureId: BigNumber;
 }
-const GetOdds: FC<GetOddsProps> = (props) => {
+
+async function _getBettingTotals(
+  bettingContract: ethers.Contract,
+  fixtureId: BigNumber
+) {
+  return await bettingContract.getBettingTotals(fixtureId);
+}
+
+export const GetOdds: FC<GetOddsProps> = (props) => {
   const { fixtureId } = props;
   const { bettingContract } = useContext(GlobalState);
   const [odds, setOdds] = useState<undefined | BettingOdds>(undefined);
 
   /**
-   * This funciton will try to reduce the odds down to the simplest fraction.
+   * This function will try to reduce the odds down to the simplest fraction.
    *
    * This calculation get tricky with decimals so we have floored the value
    * of the bets first. This will mean that the odds are always under estimated.
@@ -33,25 +41,27 @@ const GetOdds: FC<GetOddsProps> = (props) => {
     return { homeBets: _home / gcd, awayBets: _away / gcd };
   }
 
-  async function _getBettingTotals() {
+  async function getBettingOdds() {
+    let bettingTotals;
+
     if (!bettingContract) {
       throw new Error("Betting Contract not available");
     } else {
-      const bettingTotals = await bettingContract.getBettingTotals(fixtureId);
-
-      // Reduce ratio
-      const formattedOdds = processBettingOdds(
-        bettingTotals.home,
-        bettingTotals.away
-      );
-
-      setOdds(formattedOdds);
+      bettingTotals = await _getBettingTotals(bettingContract, fixtureId);
     }
+
+    // Reduce ratio
+    const formattedOdds = processBettingOdds(
+      bettingTotals.home,
+      bettingTotals.away
+    );
+
+    setOdds(formattedOdds);
   }
 
   useEffect(() => {
     // Refresh every second
-    const interval = setInterval(() => _getBettingTotals(), REFRESH_RATE);
+    const interval = setInterval(() => getBettingOdds(), REFRESH_RATE);
     return () => {
       clearInterval(interval);
     };
@@ -63,5 +73,3 @@ const GetOdds: FC<GetOddsProps> = (props) => {
     return <div>{`${odds.homeBets}:${odds.awayBets}`}</div>;
   }
 };
-
-export default GetOdds;
