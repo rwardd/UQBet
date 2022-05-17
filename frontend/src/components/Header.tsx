@@ -92,7 +92,7 @@ const accountDisplayStyling: React.CSSProperties = {
 };
 
 const iconStyling: React.CSSProperties = {
-  backgroundColor: COLORS.darkPurple,
+  backgroundColor: "#383838",
   borderRadius: 90,
   padding: "5px",
 };
