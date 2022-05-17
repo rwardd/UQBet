@@ -101,11 +101,7 @@ export const GetPotentialEarnings: FC<GetPotentialEarningsProps> = (props) => {
    */
   async function estimateEarnings() {
     // Skip estimation if payOut is known
-    if (bet.invalidated) {
-      setEarnings(0);
-      return;
-    }
-    if (bet.payOut.isNegative()) {
+    if (bet.invalidated || bet.payOut.isNegative()) {
       setEarnings(Number(ethers.utils.formatEther(bet.amount)));
       return;
     }

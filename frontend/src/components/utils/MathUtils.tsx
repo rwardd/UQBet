@@ -11,7 +11,7 @@ export function calculatePotentialEarnings(
     Number(ethers.utils.formatEther(loseBetTotal)) * (1 - PLATFORM_COMISSION);
   const bet = Number(ethers.utils.formatEther(betAmount));
 
-  return (bet / winnersTotal) * losersTotal;
+  return bet + (bet / winnersTotal) * losersTotal;
 }
 
 export function greatestCommonDivisor(a: number, b: number): number {
