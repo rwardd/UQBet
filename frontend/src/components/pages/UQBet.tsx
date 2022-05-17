@@ -137,13 +137,11 @@ const UQBet: FC = () => {
       // This happens when the user removes the Dapp from the "Connected
       // list of sites allowed access to your addresses" (Metamask > Settings > Connections)
       // To avoid errors, we reset the dapp state
-      if (newAddress === undefined) {
-        if (resetState) {
-          return resetState();
-        }
+      if (resetState) {
+        resetState();
       }
 
-      _initialize(newAddress);
+      document.location.replace("/");
     });
 
     // We reset the dapp state if the network is changed

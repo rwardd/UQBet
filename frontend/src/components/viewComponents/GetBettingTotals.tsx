@@ -152,11 +152,7 @@ export const GetPotentialEarnings: FC<GetPotentialEarningsProps> = (props) => {
       </div>
     );
   } else if (bet.invalidated) {
-    return (
-      <Text color='status-disabled' weight='bold'>
-        Bet invalidated
-      </Text>
-    );
+    return <Text color='status-disabled'>Bet invalidated</Text>;
   } else {
     const [color, sign] = getDisplayOptions(earnings);
 
