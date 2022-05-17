@@ -1,5 +1,6 @@
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "grommet";
-import React, { FC, useContext, useEffect, useState, useRef } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
+import { REFRESH_RATE } from "../../constants";
 import { GlobalState } from "../../globalState";
 import { Fixture } from "../../types";
 import AdminFixtureControls from "../AdminFixtureControls";
@@ -15,7 +16,6 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
   const { admin, refreshBets } = props;
   const { bettingContract } = useContext(GlobalState);
   const [fixtures, setFixtures] = useState<any[]>([]);
-  const hasFetchedData = useRef(false);
 
   async function _getFixtures() {
     if (!bettingContract) {
@@ -33,11 +33,11 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
   }
 
   useEffect(() => {
-    if (!hasFetchedData.current) {
-      // Fetch Data
-      _getFixtures();
-      hasFetchedData.current = true;
-    }
+    // Refresh every second
+    const interval = setInterval(() => _getFixtures(), REFRESH_RATE);
+    return () => {
+      clearInterval(interval);
+    };
   });
 
   function tableData() {

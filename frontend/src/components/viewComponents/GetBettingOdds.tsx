@@ -1,6 +1,7 @@
 import { BigNumber, ethers } from "ethers";
 import { Spinner } from "grommet";
 import React, { useContext, useEffect, useState, FC } from "react";
+import { REFRESH_RATE } from "../../constants";
 import { GlobalState } from "../../globalState";
 import { BettingOdds } from "../../types";
 
@@ -50,7 +51,7 @@ const GetOdds: FC<GetOddsProps> = (props) => {
 
   useEffect(() => {
     // Refresh every second
-    const interval = setInterval(() => _getBettingTotals(), 1000);
+    const interval = setInterval(() => _getBettingTotals(), REFRESH_RATE);
     return () => {
       clearInterval(interval);
     };
