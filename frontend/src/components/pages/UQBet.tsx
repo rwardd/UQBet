@@ -13,7 +13,7 @@ import { ethers } from "ethers";
 // using them with ethers
 import TokenArtifact from "../../contracts/BetContract.json";
 import contractAddress from "../../contracts/contract-address.json";
-import BetSlip from "../UQBetDashboard";
+import UQBetDashboard from "../UQBetDashboard";
 import { Web3Provider } from "@ethersproject/providers";
 
 // This is the Hardhat Network id, you might change it in the hardhat.config.js.
@@ -196,7 +196,7 @@ const UQBet: FC = () => {
   return (
     <>
       <Header />
-      <BetSlip />
+      <UQBetDashboard />
     </>
   );
 };
