@@ -11,7 +11,6 @@ import AddFixturePage from "./components/pages/admin/AddFixturePage";
 import { Grommet } from "grommet";
 import { theme } from "./theme";
 import AdminPage from "./components/pages/admin/AdminPage";
-import MyBetsPage from "./components/pages/MyBetsPage";
 
 // This is the entry point of your application, but it just renders the Dapp
 // react component. All of the logic is contained in it.
@@ -29,7 +28,6 @@ ReactDOM.render(
         <BrowserRouter>
           <Routes>
             <Route path='/' element={<UQBet />} />
-            <Route path='/MyBets' element={<MyBetsPage />} />
             <Route path='/admin' element={<AdminPage />} />
             <Route path='/admin/AddFixture' element={<AddFixturePage />} />
             <Route path='/DeprecatedDapp' element={<Dapp />} />

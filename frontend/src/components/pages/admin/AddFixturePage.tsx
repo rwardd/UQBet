@@ -9,7 +9,7 @@ const AddFixturePage: FC = () => {
 
   return (
     <>
-      <Header admin />
+      <Header />
       <div style={addFixturePageStyle}>
         <div style={headerStyle}>
           <BackButton

@@ -3,16 +3,10 @@ import { Header as GrommetHeader } from "grommet";
 import React, { FC, useContext } from "react";
 import { GlobalState } from "../globalState";
 import { COLORS, FONT_SIZE } from "../theme";
-import { AdminMenu, UQBetMenu } from "./Menu";
 import { Loading } from "./utils/Loading";
 
-interface HeaderProps {
-  admin?: boolean;
-}
-
-const Header: FC<HeaderProps> = (props) => {
+const Header: FC = () => {
   const { balance, selectedAddress } = useContext(GlobalState);
-  const { admin } = props;
 
   const logo = (
     <h1
@@ -41,7 +35,6 @@ const Header: FC<HeaderProps> = (props) => {
     <div style={headerStyling}>
       <GrommetHeader background='brand'>
         <Button icon={logo} hoverIndicator />
-        {admin ? AdminMenu() : UQBetMenu()}
       </GrommetHeader>
       {accountDisplay()}
     </div>
