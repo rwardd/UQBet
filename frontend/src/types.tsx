@@ -20,6 +20,7 @@ export type Bet = {
   team: string;
   amount: BigNumber;
   won: boolean;
+  invalidated: boolean;
   payedOut: boolean;
 };
 
