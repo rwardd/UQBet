@@ -21,6 +21,7 @@ contract BetContract {
         string team;
         uint256 amount;
         bool won;
+        bool invalidated;
         bool payedOut;
     }
 
@@ -141,6 +142,7 @@ contract BetContract {
         newBet.punter = a;
         newBet.team = team;
         newBet.won = false;
+        newBet.invalidated = false;
         newBet.amount = amount;
 
         allBets[betCounter] = newBet;
@@ -286,6 +288,7 @@ contract BetContract {
         fixtures[fixtureId].active = false;
         for (uint256 i = 0; i < fixtures[fixtureId].bets.length; i++) {
             allBets[fixtures[fixtureId].bets[i]].won = true;
+            allBets[fixtures[fixtureId].bets[i]].invalidated = true;
         }
     }
 
