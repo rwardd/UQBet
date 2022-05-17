@@ -9,6 +9,7 @@ export type Fixture = {
   active: boolean;
   payedOut: boolean;
   invalidated: boolean;
+  winner: string;
   bets: any[];
 };
 

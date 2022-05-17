@@ -10,6 +10,7 @@ contract BetContract {
         string date;
         bool active;
         bool invalidated;
+        string winner;
         uint256[] bets;
     }
 
@@ -76,6 +77,7 @@ contract BetContract {
         newFixture.away = _away;
         newFixture.date = _date;
         newFixture.active = true;
+        newFixture.winner = "";
         newFixture.invalidated = false;
 
         fixtureIdList.push(fixtureCounter - 1);
@@ -192,13 +194,22 @@ contract BetContract {
         locked = false;
     }
 
-    function getBettingOdds(uint256 fixtureId) public view returns (BettingOdds memory) {
+    function getBettingOdds(uint256 fixtureId)
+        public
+        view
+        returns (BettingOdds memory)
+    {
         uint256 home = 0;
         uint256 away = 0;
 
         for (uint256 i = 0; i < fixtures[fixtureId].bets.length; i++) {
-            if (keccak256(abi.encodePacked((allBets[fixtures[fixtureId].bets[i]].team))) ==
-                keccak256(abi.encodePacked(fixtures[fixtureId].home))) {
+            if (
+                keccak256(
+                    abi.encodePacked(
+                        (allBets[fixtures[fixtureId].bets[i]].team)
+                    )
+                ) == keccak256(abi.encodePacked(fixtures[fixtureId].home))
+            ) {
                 home += allBets[fixtures[fixtureId].bets[i]].amount;
             } else {
                 away += allBets[fixtures[fixtureId].bets[i]].amount;
@@ -211,7 +222,7 @@ contract BetContract {
 
         return odds;
     }
- 
+
     function calculateLosersTotal(uint256 fixtureId)
         private
         view
@@ -249,6 +260,7 @@ contract BetContract {
         );
 
         fixtures[fixtureId].active = false;
+        fixtures[fixtureId].winner = winner;
         for (uint256 i = 0; i < fixtures[fixtureId].bets.length; i++) {
             if (
                 keccak256(
