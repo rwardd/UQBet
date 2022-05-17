@@ -29,12 +29,12 @@ const AdmimFixtureControls: FC<AdminFixtureControlProps> = (props) => {
   }
 
   return (
-    <>
+    <div>
       <Button
         primary
         label={getLabel()}
         disabled={!fixture.active}
-        size="small"
+        size='small'
         onClick={() => setShowModal(true)}
       />
       {fixture.active && (
@@ -45,7 +45,7 @@ const AdmimFixtureControls: FC<AdminFixtureControlProps> = (props) => {
           refreshFixtureData={refreshFixtureData}
         />
       )}
-    </>
+    </div>
   );
 };
 

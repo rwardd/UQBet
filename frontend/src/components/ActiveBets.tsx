@@ -24,11 +24,11 @@ const ActiveBets: FC<ActiveBetsProps> = (props) => {
       return (
         <TableRow key={betId.toString()}>
           <TableCell>{team}</TableCell>
-          <TableCell>{formattedAmount}</TableCell>
-          <TableCell>
+          <TableCell align='center'>{formattedAmount}</TableCell>
+          <TableCell align='center'>
             <GetOdds fixtureId={fixId} />
           </TableCell>
-          <TableCell>
+          <TableCell align='center'>
             <RetrieveFunds bet={bet} refreshBets={refreshBets} />
           </TableCell>
         </TableRow>
@@ -42,8 +42,10 @@ const ActiveBets: FC<ActiveBetsProps> = (props) => {
     let columns = ["Team", "Amount", "Odds", "Result"];
 
     const tableCells = columns.map((columnTitle) => {
+      const align = columnTitle === columns[0] ? "left" : "center";
+
       return (
-        <TableCell scope='col' border='bottom' key={columnTitle}>
+        <TableCell scope='col' border='bottom' key={columnTitle} align={align}>
           {columnTitle}
         </TableCell>
       );

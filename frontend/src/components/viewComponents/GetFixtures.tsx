@@ -46,18 +46,18 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
       return (
         <TableRow key={fixId.toString()}>
           <TableCell>{home}</TableCell>
-          <TableCell>{away}</TableCell>
-          <TableCell>{date}</TableCell>
-          <TableCell>
+          <TableCell align='center'>{away}</TableCell>
+          <TableCell align='center'>{date}</TableCell>
+          <TableCell align='center'>
             <GetOdds fixtureId={fixId} />
           </TableCell>
           {!admin && refreshBets && (
-            <TableCell>
+            <TableCell align='center'>
               <FixtureControls fixture={fixture} refreshBets={refreshBets} />
             </TableCell>
           )}
           {admin && (
-            <TableCell>
+            <TableCell align='center'>
               <AdminFixtureControls
                 fixture={fixture}
                 refreshFixtureData={_getFixtures}
@@ -81,8 +81,10 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
     }
 
     const tableCells = columns.map((columnTitle) => {
+      const align = columnTitle === columns[0] ? "left" : "center";
+
       return (
-        <TableCell scope='col' border='bottom' key={columnTitle}>
+        <TableCell scope='col' border='bottom' key={columnTitle} align={align}>
           {columnTitle}
         </TableCell>
       );

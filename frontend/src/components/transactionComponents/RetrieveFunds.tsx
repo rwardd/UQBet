@@ -77,7 +77,7 @@ const RetrieveFunds: FC<RetrieveFundsProps> = (props) => {
   }
 
   return (
-    <>
+    <div>
       <Button
         primary
         label={status !== "claiming" ? getLabel() : "Claiming..."}
@@ -85,7 +85,7 @@ const RetrieveFunds: FC<RetrieveFundsProps> = (props) => {
         size='small'
         onClick={claimWinnings}
       />
-    </>
+    </div>
   );
 };
 
