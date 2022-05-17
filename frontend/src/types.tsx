@@ -9,6 +9,7 @@ export type Fixture = {
   active: boolean;
   payedOut: boolean;
   invalidated: boolean;
+  winner: string;
   bets: any[];
 };
 
@@ -18,8 +19,9 @@ export type Bet = {
   punter: string;
   team: string;
   amount: BigNumber;
-  won: boolean;
+  invalidated: boolean;
   payedOut: boolean;
+  payOut: BigNumber;
 };
 
 export type BettingOdds = {

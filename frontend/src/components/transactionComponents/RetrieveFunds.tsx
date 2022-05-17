@@ -10,9 +10,12 @@ interface RetrieveFundsProps {
   refreshBets: () => void;
 }
 
+/**
+ * NOTE: Caller must have filtered out payedOut bets
+ */
 const RetrieveFunds: FC<RetrieveFundsProps> = (props) => {
   const { bet, refreshBets } = props;
-  const { won, payedOut, betId } = bet;
+  const { payOut, betId } = bet;
   const [error, setError] = useState<null | Error>(null);
   const [status, setStatus] = useState("doing nothing");
   const { setTransactionError, bettingContract, setTxBeingSet } =
@@ -47,11 +50,11 @@ const RetrieveFunds: FC<RetrieveFundsProps> = (props) => {
   };
 
   function getLabel(): string {
-    if (won && !payedOut) {
+    if (payOut.gt(0)) {
       return "Claim Winnings";
     }
 
-    if (!won && !payedOut) {
+    if (payOut.isZero()) {
       return "In Progress";
     }
 
@@ -78,7 +81,7 @@ const RetrieveFunds: FC<RetrieveFundsProps> = (props) => {
       <Button
         primary
         label={status !== "claiming" ? getLabel() : "Claiming..."}
-        disabled={(!won && !payedOut) || status === "claiming"}
+        disabled={payOut.isZero() || status === "claiming"}
         size='small'
         onClick={claimWinnings}
       />

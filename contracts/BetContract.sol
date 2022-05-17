@@ -10,6 +10,7 @@ contract BetContract {
         string date;
         bool active;
         bool invalidated;
+        string winner;
         uint256[] bets;
     }
 
@@ -20,6 +21,7 @@ contract BetContract {
         string team;
         uint256 amount;
         int256 payOut;
+        bool invalidated;
         bool payedOut;
     }
 
@@ -76,6 +78,7 @@ contract BetContract {
         newFixture.away = _away;
         newFixture.date = _date;
         newFixture.active = true;
+        newFixture.winner = "";
         newFixture.invalidated = false;
 
         fixtureIdList.push(fixtureCounter - 1);
@@ -162,7 +165,7 @@ contract BetContract {
             allBets[betId].payedOut == false,
             "Bet has already been payed out"
         );
-        require(allBets[betId].payOut <= 0, "This bet has not been won");
+        require(allBets[betId].payOut >= 0, "This bet has not been won");
         require(
             allBets[betId].punter == msg.sender,
             "Not the owner of this bet"
@@ -180,8 +183,13 @@ contract BetContract {
         uint256 away = 0;
 
         for (uint256 i = 0; i < fixtures[fixtureId].bets.length; i++) {
-            if (keccak256(abi.encodePacked((allBets[fixtures[fixtureId].bets[i]].team))) ==
-                keccak256(abi.encodePacked(fixtures[fixtureId].home))) {
+            if (
+                keccak256(
+                    abi.encodePacked(
+                        (allBets[fixtures[fixtureId].bets[i]].team)
+                    )
+                ) == keccak256(abi.encodePacked(fixtures[fixtureId].home))
+            ) {
                 home += allBets[fixtures[fixtureId].bets[i]].amount;
             } else {
                 away += allBets[fixtures[fixtureId].bets[i]].amount;
@@ -200,8 +208,9 @@ contract BetContract {
             msg.sender == owner,
             "Only UQ Sports Administration can set the winner"
         );
-        // Set Fixture as inactive
+        // Set winner and inactive
         fixtures[fixtureId].active = false;
+        fixtures[fixtureId].winner = winner;
 
         // Calculate winner and loser totals
         uint256 losersTotal;
@@ -242,6 +251,7 @@ contract BetContract {
         fixtures[fixtureId].active = false;
         for (uint256 i = 0; i < fixtures[fixtureId].bets.length; i++) {
             allBets[fixtures[fixtureId].bets[i]].payOut = int256(allBets[fixtures[fixtureId].bets[i]].amount);
+            allBets[fixtures[fixtureId].bets[i]].invalidated = true;
         }
     }
 

@@ -22,7 +22,7 @@ const AdmimFixtureControls: FC<AdminFixtureControlProps> = (props) => {
     }
 
     if (!fixture.active) {
-      return "Paid Out";
+      return `${fixture.winner}  won`;
     }
 
     return "Error";
@@ -34,7 +34,7 @@ const AdmimFixtureControls: FC<AdminFixtureControlProps> = (props) => {
         primary
         label={getLabel()}
         disabled={!fixture.active}
-        size='small'
+        size="small"
         onClick={() => setShowModal(true)}
       />
       {fixture.active && (

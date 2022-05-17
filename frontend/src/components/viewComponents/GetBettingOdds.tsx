@@ -36,12 +36,12 @@ const GetOdds: FC<GetOddsProps> = (props) => {
     if (!bettingContract) {
       throw new Error("Betting Contract not available");
     } else {
-      const bettingOdds = await bettingContract.getBettingOdds(fixtureId);
+      const bettingTotals = await bettingContract.getBettingTotals(fixtureId);
 
       // Reduce ratio
       const formattedOdds = processBettingOdds(
-        bettingOdds.homeBets,
-        bettingOdds.awayBets
+        bettingTotals.home,
+        bettingTotals.away
       );
 
       setOdds(formattedOdds);
