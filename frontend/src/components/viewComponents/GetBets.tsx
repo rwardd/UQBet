@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { REFRESH_RATE } from "../../constants";
 import { GlobalState } from "../../globalState";
 import { Bet } from "../../types";
@@ -10,7 +10,7 @@ const GetBets = (): BetsHook => {
   const { bettingContract } = useContext(GlobalState);
   const [userBets, setUserBets] = useState<any[] | null>(null);
 
-  async function _getUserBets() {
+  const _getUserBets = useCallback(async () => {
     if (!bettingContract) {
       throw new Error("Betting Contract not available");
     } else {
@@ -23,15 +23,16 @@ const GetBets = (): BetsHook => {
 
       setUserBets(userBets);
     }
-  }
+  }, [bettingContract]);
 
   useEffect(() => {
     // Refresh every second
+    _getUserBets();
     const interval = setInterval(() => _getUserBets(), REFRESH_RATE);
     return () => {
       clearInterval(interval);
     };
-  });
+  }, [_getUserBets]);
 
   return [userBets, _getUserBets];
 };

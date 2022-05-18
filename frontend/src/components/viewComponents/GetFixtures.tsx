@@ -7,6 +7,7 @@ import {
   TableRow,
 } from "grommet";
 import React, { FC, useContext, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { REFRESH_RATE } from "../../constants";
 import { GlobalState } from "../../globalState";
 import { Fixture } from "../../types";
@@ -24,7 +25,7 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
   const { bettingContract } = useContext(GlobalState);
   const [fixtures, setFixtures] = useState<null | any[]>(null);
 
-  async function _getFixtures() {
+  const _getFixtures = useCallback(async () => {
     if (!bettingContract) {
       throw new Error("Betting Contract not available");
     } else {
@@ -37,15 +38,16 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
 
       setFixtures(fixtureList);
     }
-  }
+  }, [bettingContract]);
 
   useEffect(() => {
     // Refresh every second
+    _getFixtures();
     const interval = setInterval(() => _getFixtures(), REFRESH_RATE);
     return () => {
       clearInterval(interval);
     };
-  });
+  }, [_getFixtures]);
 
   function tableData() {
     const fixtureData = fixtures?.map((fixture: Fixture) => {

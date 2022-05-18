@@ -24,7 +24,7 @@ const ActiveBets: FC<ActiveBetsProps> = (props) => {
 
   function tableData() {
     const betData = filteredActiveBets?.map((bet: Bet) => {
-      const { betId, team, amount, fixId } = bet;
+      const { betId, team, amount } = bet;
 
       const formattedAmount = ethers.utils.formatEther(amount);
 
@@ -33,7 +33,7 @@ const ActiveBets: FC<ActiveBetsProps> = (props) => {
           <TableCell>{team}</TableCell>
           <TableCell align='center'>{formattedAmount}</TableCell>
           <TableCell align='center'>
-            <GetPotentialEarnings fixtureId={fixId} bet={bet} />
+            <GetPotentialEarnings bet={bet} />
           </TableCell>
           <TableCell align='center'>
             <RetrieveFunds bet={bet} refreshBets={refreshBets} />

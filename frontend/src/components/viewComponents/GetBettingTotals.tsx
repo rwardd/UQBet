@@ -1,6 +1,6 @@
 import { BigNumber, ethers } from "ethers";
 import { Spinner, Text } from "grommet";
-import React, { useContext, useEffect, useState, FC } from "react";
+import React, { useContext, useEffect, useState, FC, useCallback } from "react";
 import { REFRESH_RATE } from "../../constants";
 import { GlobalState } from "../../globalState";
 import { Bet, BettingOdds } from "../../types";
@@ -14,7 +14,6 @@ interface GetOddsProps {
 }
 
 interface GetPotentialEarningsProps {
-  fixtureId: BigNumber;
   bet: Bet;
 }
 
@@ -46,7 +45,7 @@ export const GetOdds: FC<GetOddsProps> = (props) => {
     return { homeBets: _home / gcd, awayBets: _away / gcd };
   }
 
-  async function getBettingOdds() {
+  const getBettingOdds = useCallback(async () => {
     let bettingTotals;
 
     if (!bettingContract) {
@@ -62,15 +61,16 @@ export const GetOdds: FC<GetOddsProps> = (props) => {
     );
 
     setOdds(formattedOdds);
-  }
+  }, [bettingContract, fixtureId]);
 
   useEffect(() => {
+    getBettingOdds();
     // Refresh every second
     const interval = setInterval(() => getBettingOdds(), REFRESH_RATE);
     return () => {
       clearInterval(interval);
     };
-  });
+  }, [getBettingOdds]);
 
   if (!odds) {
     return (
@@ -84,22 +84,14 @@ export const GetOdds: FC<GetOddsProps> = (props) => {
 };
 
 export const GetPotentialEarnings: FC<GetPotentialEarningsProps> = (props) => {
-  const { fixtureId, bet } = props;
+  const { bet } = props;
   const { bettingContract } = useContext(GlobalState);
   const [earnings, setEarnings] = useState<undefined | Number>(undefined);
-
-  useEffect(() => {
-    // Refresh every second
-    const interval = setInterval(() => estimateEarnings(), REFRESH_RATE);
-    return () => {
-      clearInterval(interval);
-    };
-  });
 
   /**
    * This function will try to estimate the earnings of a game
    */
-  async function estimateEarnings() {
+  const estimateEarnings = useCallback(async () => {
     // Skip estimation if payOut is known
     if (bet.invalidated || bet.payOut.isNegative()) {
       setEarnings(Number(ethers.utils.formatEther(bet.amount)));
@@ -111,7 +103,7 @@ export const GetPotentialEarnings: FC<GetPotentialEarningsProps> = (props) => {
     if (!bettingContract) {
       throw new Error("Betting Contract not available");
     } else {
-      bettingTotals = await _getBettingTotals(bettingContract, fixtureId);
+      bettingTotals = await _getBettingTotals(bettingContract, bet.fixId);
     }
 
     // Calculate potential earnings
@@ -129,7 +121,16 @@ export const GetPotentialEarnings: FC<GetPotentialEarningsProps> = (props) => {
           );
 
     setEarnings(potetialEarnings);
-  }
+  }, [bettingContract, bet]);
+
+  useEffect(() => {
+    estimateEarnings();
+    // Refresh every second
+    const interval = setInterval(() => estimateEarnings(), REFRESH_RATE);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [estimateEarnings]);
 
   function getDisplayOptions(earnings: Number): [color: string, sign: string] {
     if (earnings > 0) {
