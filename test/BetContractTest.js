@@ -85,6 +85,12 @@ describe("BetContract contract", function () {
             await expect(betContract.connect(addr1).addFixture("Red Sox","White Sox", "14 May 22"))
                 .to.be.revertedWith("Only UQ Sports Administration can add Fixtures");
         });
+
+        it("Should not be able to create duplicate Fixtures", async function() {
+            await betContract.addFixture("Red Sox","White Sox", "14 May 22");
+            await expect(betContract.addFixture("Red Sox","White Sox", "14 May 22"))
+            .to.be.revertedWith("Duplicate Fixture");
+        });
     });
 
     describe("Bet", function () {
@@ -92,6 +98,10 @@ describe("BetContract contract", function () {
             await betContract.addFixture("Red Sox","White Sox", "14 May 22");
             await expect(betContract.placeBet(0, "Red Sox", 50)).to.be.revertedWith("UQ Sports Administration cannot place bets");
             
+        });
+        
+        it("Should not be able to place a bet on invalid fixture", async function() {
+            await expect(betContract.connect(addr1).placeBet(0, "Galaxy", 50, {value: 50})).to.be.revertedWith("Not a valid Bet");    
         });
 
         it("Amount bet should be greater than 0", async function() {

@@ -70,8 +70,12 @@ contract BetContract {
             msg.sender == owner,
             "Only UQ Sports Administration can add Fixtures"
         );
-        //TODO:
-        //Ensure you cant duplicate fixtures
+        
+        require(
+            checkFixtureInput(_home, _away, _date) == true,
+            "Duplicate Fixture"
+        );
+        
         Fixture memory newFixture = fixtures[fixtureCounter++];
         newFixture.fixId = (fixtureCounter - 1);
         newFixture.home = _home;
@@ -83,6 +87,21 @@ contract BetContract {
 
         fixtureIdList.push(fixtureCounter - 1);
         fixtures[fixtureCounter - 1] = newFixture;
+    }
+
+    function checkFixtureInput(string memory _home, string memory _away, string memory _date) private view returns (bool){
+        string memory newFixture = string(abi.encodePacked(_home, _away, _date));
+        bool valid = true;
+        for (uint256 i = 0; i < fixtureIdList.length; i++) {
+            if(fixtures[i].active) {
+                string memory oldFixture = string(abi.encodePacked(fixtures[i].home, fixtures[i].away, fixtures[i].date));
+                if(keccak256(abi.encodePacked(oldFixture)) == keccak256(abi.encodePacked(newFixture))) {
+                    valid = false;
+                    break;
+                }
+            }
+        }
+        return valid;
     }
 
     function getFixtures() public view returns (uint256[] memory) {
@@ -133,8 +152,10 @@ contract BetContract {
             amount == msg.value,
             "Amount deposited does not equal message value"
         );
-        //TODO:
-        //Ensure you cant place a bet on a non-existent fixture
+
+        require(checkBetInput(fixtureID, team) == true, 
+            "Not a valid Bet");
+
         address a = msg.sender;
         Bet memory newBet;
         newBet.fixId = fixtureID;
@@ -153,6 +174,21 @@ contract BetContract {
         allBets[betCounter] = newBet;
 
         betCounter++;
+    }
+
+    function checkBetInput(
+        uint256 fixtureID, 
+        string memory team
+    ) private view returns (bool){     
+        bool valid = true;
+        if(!fixtures[fixtureID].active) {
+            valid = false;
+        }
+        if(!(keccak256(abi.encodePacked(team)) == keccak256(abi.encodePacked(fixtures[fixtureID].home))) 
+                && !(keccak256(abi.encodePacked(team)) == keccak256(abi.encodePacked(fixtures[fixtureID].away)))) {
+            valid = false;
+        }
+        return valid;
     }
 
     function retrieveFunds(uint256 betId) public payable {
@@ -208,6 +244,9 @@ contract BetContract {
             msg.sender == owner,
             "Only UQ Sports Administration can set the winner"
         );
+        require(fixtures[fixtureId].active == true, 
+        "Fixture is inactive");
+
         // Set winner and inactive
         fixtures[fixtureId].active = false;
         fixtures[fixtureId].winner = winner;
@@ -255,18 +294,12 @@ contract BetContract {
         }
     }
 
-    receive() external payable {
-        //do nothing - function to receive ether.
-    }
-
-    fallback() external payable {
-        //do nothing
-    }
-
     function takeEarnings() public onlyOwner {
+        require(!locked, "Re-entrancy detected");
         uint256 amount = address(this).balance;
         bool fixturesActive = false;
         bool allBetsPaid = true;
+        locked = true;
         for (uint256 i = 0; i < fixtureCounter; i++) {
             if (fixtures[i].active == true) {
                 fixturesActive = true;
@@ -287,10 +320,19 @@ contract BetContract {
         );
         (bool success, ) = owner.call{value: amount}("");
         require(success, "Fail in transferring funds to UQ admin");
+        locked = false;
     }
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Only UQ admin can call this function");
         _;
+    }
+
+    receive() external payable {
+        //do nothing - function to receive ether.
+    }
+
+    fallback() external payable {
+        //do nothing
     }
 }
