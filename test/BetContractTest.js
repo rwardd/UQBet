@@ -2,6 +2,7 @@
 // so feel free to add new ones.
 
 const { expect } = require("chai");
+const { BigNumber } = require("ethers");
 const { ethers, waffle, hardhatArguments } = require("hardhat")
 
 describe("BetContract contract", function () {
@@ -115,7 +116,6 @@ describe("BetContract contract", function () {
             expect((await betContract.getBet((await (await betContract.getFixture(0)).bets)[0])).punter).to.equal(addr1.address);
             expect((await betContract.getBet((await (await betContract.getFixture(0)).bets)[0])).team).to.equal("Red Sox");
             expect((await betContract.getBet((await (await betContract.getFixture(0)).bets)[0])).amount).to.equal(50);
-            expect((await betContract.getBet((await (await betContract.getFixture(0)).bets)[0])).won).to.equal(false);
 
             //Contract should hold bet amount
             expect(await prov.getBalance(betContract.address)).to.equal(50);
@@ -129,25 +129,25 @@ describe("BetContract contract", function () {
 
         it("Should not be able to set winners as non-owner", async function() {
             await betContract.addFixture("Red Sox","White Sox", "14 May 22");
-            await expect(betContract.connect(addr1).setWinner(0, "Red Sox", false)).to.be.revertedWith("Only UQ Sports Administration can set the winner");
+            await expect(betContract.connect(addr1).setWinner(0, "Red Sox")).to.be.revertedWith("Only UQ Sports Administration can set the winner");
         });
 
         it("Owner should be able to set winner of valid game, bets should reflect won", async function() {
             await betContract.addFixture("Red Sox","White Sox", "14 May 22");
             await betContract.connect(addr1).placeBet(0, "Red Sox", 50, {value: 50});
             await betContract.connect(addr2).placeBet(0, "White Sox", 50, {value: 50});
-            await betContract.setWinner(0, "Red Sox", false);
-            expect((await betContract.getBet(0)).won).to.equal(true);
-            expect((await betContract.getBet(1)).won).to.equal(false);
+            await betContract.setWinner(0, "Red Sox");
+            expect(((await betContract.getBet(0)).payOut).gte(0)).to.equal(true);
+            expect(((await betContract.getBet(1)).payOut).lt(0)).to.equal(true);
         });
 
         it("Owner should be able to set invalid game, bets should all reflect won", async function() {
             await betContract.addFixture("Red Sox","White Sox", "14 May 22");
             await betContract.connect(addr1).placeBet(0, "Red Sox", 50, {value: 50});
             await betContract.connect(addr2).placeBet(0, "White Sox", 50, {value: 50});
-            await betContract.setWinner(0, "Red Sox", true);
-            expect((await betContract.getBet(0)).won).to.equal(true);
-            expect((await betContract.getBet(1)).won).to.equal(true);
+            await betContract.setInvalidated(0);
+            expect(((await betContract.getBet(0)).payOut).gte(0)).to.equal(true);
+            expect(((await betContract.getBet(1)).payOut).gte(0)).to.equal(true);
         });
 
     });
@@ -164,7 +164,7 @@ describe("BetContract contract", function () {
             await betContract.connect(addr3).placeBet(0, "White Sox", 500, {value: 500});
             await betContract.connect(addr4).placeBet(0, "White Sox", 500, {value: 500});
             console.log("After Bet: ", await prov.getBalance(betContract.address));
-            await betContract.setWinner(0, "Red Sox", false);
+            await betContract.setWinner(0, "Red Sox");
             await betContract.connect(addr1).retrieveFunds(1);
             await betContract.connect(addr2).retrieveFunds(2);
             console.log("After Payout: ", await prov.getBalance(betContract.address));
@@ -180,7 +180,7 @@ describe("BetContract contract", function () {
             await betContract.connect(addr3).placeBet(0, "White Sox", 500, {value: 500});
             await betContract.connect(addr4).placeBet(0, "White Sox", 500, {value: 500});
             console.log("After Bet: ", await prov.getBalance(betContract.address));
-            await betContract.setWinner(0, "Red Sox", true);
+            await betContract.setInvalidated(0);
             await betContract.connect(addr1).retrieveFunds(1);
             await betContract.connect(addr2).retrieveFunds(2);
             await betContract.connect(addr3).retrieveFunds(3);
