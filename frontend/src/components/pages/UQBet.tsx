@@ -57,7 +57,7 @@ const UQBet: FC = () => {
     _provider = new ethers.providers.Web3Provider(window.ethereum);
 
     // Then, we initialize the contract using that provider and the token's
-    // artifact. You can do this same thing with your contracts.
+    // artifact.
     let contract = new ethers.Contract(
       contractAddress.Token,
       TokenArtifact.abi,
@@ -77,13 +77,7 @@ const UQBet: FC = () => {
     setBalance(Number(balance).toFixed(2));
   }
 
-  // The next two methods are needed to start and stop polling data. While
-  // the data being polled here is specific to this example, you can use this
-  // pattern to read any data from your contracts.
-  //
-  // Note that if you don't need it to update in near real time, you probably
-  // don't need to poll it. If that's the case, you can just fetch it when you
-  // initialize the app, as we do with the token data.
+  // The next two methods are needed to start and stop polling data.
   function _startPollingData(userAddress: string) {
     _pollDataInterval = setInterval(() => _updateEthBalance(userAddress), 1000);
 

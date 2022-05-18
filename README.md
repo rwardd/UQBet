@@ -1,8 +1,6 @@
-# UQBet, a COMS4507 project
+# UQBet
 
-This repository contains a sample project that you can use as the starting point
-for your Ethereum project. It's also a great fit for learning the basics of
-smart contract development.
+This repository contains UQBet, a betting website running on the Ethereum network.
 
 This project is intended to be used with the
 [Hardhat Beginners Tutorial](https://hardhat.org/tutorial), but you should be
@@ -70,7 +68,8 @@ Your environment will have everything you need to build a Dapp powered by Hardha
 - [Chai](https://www.chaijs.com/): A JavaScript assertion library.
 - [ethers.js](https://docs.ethers.io/v5/): A JavaScript library for interacting with Ethereum.
 - [Waffle](https://github.com/EthWorks/Waffle/): To have Ethereum-specific Chai assertions/mathers.
-- [A sample frontend/Dapp](./frontend): A Dapp which uses [Create React App](https://github.com/facebook/create-react-app).
+- [frontend/UQBet](./frontend): A frontend which uses [Create React App](https://github.com/facebook/create-react-app).
+- [grommet](https://v2.grommet.io/): A lightweight UI library
 
 ## Troubleshooting
 
