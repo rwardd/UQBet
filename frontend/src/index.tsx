@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Dapp } from "./components/DeprecatedDapp";
 import UQBet from "./components/pages/UQBet";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
@@ -30,7 +29,6 @@ ReactDOM.render(
             <Route path='/' element={<UQBet />} />
             <Route path='/admin' element={<AdminPage />} />
             <Route path='/admin/AddFixture' element={<AddFixturePage />} />
-            <Route path='/DeprecatedDapp' element={<Dapp />} />
           </Routes>
         </BrowserRouter>
       </GlobalStateProvider>
