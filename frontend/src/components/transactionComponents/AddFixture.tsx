@@ -125,7 +125,7 @@ const AddFixture: FC = () => {
             onChange={({ value }) =>
               value?.toString() &&
               setDate(
-                new Date(value.toString()).toLocaleDateString("en-US", {
+                new Date(value.toString()).toLocaleDateString("en", {
                   timeZone: "Australia/Brisbane",
                 })
               )
