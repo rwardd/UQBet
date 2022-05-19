@@ -20,7 +20,7 @@ const PlaceBet: FC<PlaceBetProps> = (props) => {
   const [error, setError] = useState<null | Error>(null);
   const [status, setStatus] = useState("typing");
 
-  const { setTransactionError, bettingContract, setTxBeingSet } =
+  const { setTransactionError, bettingContract, setTxBeingSet, txBeingSent } =
     useContext(GlobalState);
 
   const _placeBet = async (
@@ -93,7 +93,7 @@ const PlaceBet: FC<PlaceBetProps> = (props) => {
 
   return (
     <>
-      <Form value={"Hello"} onReset={resetForm} onSubmit={submitBet}>
+      <Form onReset={resetForm} onSubmit={submitBet}>
         <FormField label='To Win'>
           <Select
             options={[home, away]}
@@ -112,7 +112,7 @@ const PlaceBet: FC<PlaceBetProps> = (props) => {
           <Button
             type='submit'
             primary
-            label='Submit'
+            label={txBeingSent ? "Submitting..." : "Submit"}
             disabled={isFormEmpty() || status === "submitting"}
           />
           <Button type='reset' label='Reset' />

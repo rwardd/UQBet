@@ -36,8 +36,8 @@ const Header: FC = () => {
                 marginLeft: "8px",
               }}
             >{`${selectedAddress?.slice(0, 5)}...${selectedAddress?.slice(
-              -5,
-              -1
+              -4,
+              selectedAddress.length
             )}`}</h5>
             <FaEthereum style={iconStyling} size='35px' />
           </div>
@@ -48,7 +48,7 @@ const Header: FC = () => {
 
   return (
     <div style={headerStyling}>
-      <GrommetHeader background='brand'>
+      <GrommetHeader>
         <Button icon={logo} hoverIndicator />
       </GrommetHeader>
       {accountDisplay()}

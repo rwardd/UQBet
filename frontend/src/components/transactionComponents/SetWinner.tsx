@@ -14,7 +14,7 @@ interface SetWinnerProps {
 const SetWinner: FC<SetWinnerProps> = (props) => {
   const { team, fixtureID, setShow, refreshFixtureData } = props;
 
-  const { setTransactionError, bettingContract, setTxBeingSet } =
+  const { setTransactionError, bettingContract, setTxBeingSet, txBeingSent } =
     useContext(GlobalState);
 
   const _setWinner = async (fixtureID: BigNumber, winner: string) => {
@@ -51,6 +51,7 @@ const SetWinner: FC<SetWinnerProps> = (props) => {
     <>
       <Button
         primary
+        disabled={txBeingSent}
         label={`Set winner as ${team}`}
         onClick={() => _setWinner(fixtureID, team)}
         margin='xsmall'

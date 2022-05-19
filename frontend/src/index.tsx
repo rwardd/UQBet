@@ -10,6 +10,8 @@ import AddFixturePage from "./components/pages/admin/AddFixturePage";
 import { Grommet } from "grommet";
 import { theme } from "./theme";
 import AdminPage from "./components/pages/admin/AdminPage";
+import ErrorNotification from "./components/notifications/ErrorNotification";
+import WaitingForTransactionNotification from "./components/notifications/WaitingForTransactionNotification";
 
 // This is the entry point of your application, but it just renders the Dapp
 // react component. All of the logic is contained in it.
@@ -24,6 +26,8 @@ ReactDOM.render(
   <React.StrictMode>
     <Grommet theme={theme}>
       <GlobalStateProvider>
+        <ErrorNotification />
+        <WaitingForTransactionNotification />
         <BrowserRouter>
           <Routes>
             <Route path='/' element={<UQBet />} />

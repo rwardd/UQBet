@@ -126,7 +126,7 @@ const AddFixture: FC = () => {
           <Button
             type='submit'
             primary
-            label='Submit'
+            label={status === "submitting" ? "Submitting" : "Submit"}
             disabled={isFormEmpty() || status === "submitting"}
           />
           <Button type='reset' label='Reset' />
