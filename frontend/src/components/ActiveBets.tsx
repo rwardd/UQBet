@@ -10,6 +10,7 @@ import {
 import React, { FC } from "react";
 import { Bet } from "../types";
 import RetrieveFunds from "./transactionComponents/RetrieveFunds";
+import { capitalizeFirstLetter } from "./utils/StringUtils";
 import { GetPotentialEarnings } from "./viewComponents/GetBettingTotals";
 
 interface ActiveBetsProps {
@@ -30,7 +31,7 @@ const ActiveBets: FC<ActiveBetsProps> = (props) => {
 
       return (
         <TableRow key={betId.toString()}>
-          <TableCell>{team}</TableCell>
+          <TableCell>{capitalizeFirstLetter(team)}</TableCell>
           <TableCell align='center'>{formattedAmount}</TableCell>
           <TableCell align='center'>
             <GetPotentialEarnings bet={bet} />

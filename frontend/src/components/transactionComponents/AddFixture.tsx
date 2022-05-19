@@ -2,6 +2,7 @@ import React, { FC, useContext, useState } from "react";
 import { GlobalState } from "../../globalState";
 import { ERROR_CODE_TX_REJECTED_BY_USER } from "../../constants";
 import { Box, Button, DateInput, Form, FormField, TextInput} from "grommet";
+import { capitalizeFirstLetter } from "../utils/StringUtils";
 
 const AddFixture: FC = () => {
   const { setTransactionError, bettingContract, setTxBeingSet } =
@@ -71,7 +72,11 @@ const AddFixture: FC = () => {
     e.preventDefault();
     setStatus("submitting");
     try {
-      await _addFixture(homeTeam, awayTeam, date);
+      await _addFixture(
+        capitalizeFirstLetter(homeTeam),
+        capitalizeFirstLetter(awayTeam),
+        date
+      );
       setStatus("success");
       resetForm();
     } catch (err) {

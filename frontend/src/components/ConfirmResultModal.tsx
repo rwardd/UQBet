@@ -12,6 +12,7 @@ import { BOX, COLORS } from "../theme";
 import { Fixture } from "../types";
 import SetInvalidated from "./transactionComponents/SetInvalidated";
 import SetWinner from "./transactionComponents/SetWinner";
+import { capitalizeFirstLetter } from "./utils/StringUtils";
 
 interface ConfirmResultModalProps {
   show: boolean;
@@ -30,10 +31,10 @@ const ConfirmResultModal: FC<ConfirmResultModalProps> = (props) => {
       <Box width='medium' margin={{ bottom: "medium" }} justify='center'>
         <NameValueList>
           <NameValuePair name='Home team'>
-            <Text color='text-strong'>{home}</Text>
+            <Text color='text-strong'>{capitalizeFirstLetter(home)}</Text>
           </NameValuePair>
           <NameValuePair name='Away team'>
-            <Text color='text-strong'>{away}</Text>
+            <Text color='text-strong'>{capitalizeFirstLetter(away)}</Text>
           </NameValuePair>
           <NameValuePair name='Date'>
             <Text color='text-strong'>{date}</Text>

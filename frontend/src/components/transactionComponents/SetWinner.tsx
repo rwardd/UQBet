@@ -3,6 +3,7 @@ import { GlobalState } from "../../globalState";
 import { ERROR_CODE_TX_REJECTED_BY_USER } from "../../constants";
 import { Button } from "grommet";
 import { BigNumber } from "ethers";
+import { capitalizeFirstLetter } from "../utils/StringUtils";
 
 interface SetWinnerProps {
   team: string;
@@ -52,7 +53,7 @@ const SetWinner: FC<SetWinnerProps> = (props) => {
       <Button
         primary
         disabled={txBeingSent}
-        label={`Set winner as ${team}`}
+        label={`Set winner as ${capitalizeFirstLetter(team)}`}
         onClick={() => _setWinner(fixtureID, team)}
         margin='xsmall'
       />

@@ -11,6 +11,7 @@ import {
 import { Checkmark, Clear, Close } from "grommet-icons";
 import React, { FC } from "react";
 import { Bet } from "../types";
+import { capitalizeFirstLetter } from "./utils/StringUtils";
 
 interface InactiveBetsProps {
   userBets: Bet[] | null;
@@ -66,7 +67,7 @@ const InactiveBets: FC<InactiveBetsProps> = (props) => {
 
       return (
         <TableRow key={betId.toString()}>
-          <TableCell>{team}</TableCell>
+          <TableCell>{capitalizeFirstLetter(team)}</TableCell>
           <TableCell style={{ alignItems: "center" }}>
             {betStatus(won, invalidated)}
           </TableCell>

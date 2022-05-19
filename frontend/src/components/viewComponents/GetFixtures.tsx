@@ -13,6 +13,7 @@ import { GlobalState } from "../../globalState";
 import { Fixture } from "../../types";
 import AdminFixtureControls from "../AdminFixtureControls";
 import FixtureControls from "../FixtureControls";
+import { capitalizeFirstLetter } from "../utils/StringUtils";
 import { GetOdds } from "./GetBettingTotals";
 
 interface GetFixturesProps {
@@ -54,8 +55,8 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
       const { fixId, home, away, date } = fixture;
       return (
         <TableRow key={fixId.toString()}>
-          <TableCell>{home}</TableCell>
-          <TableCell align='center'>{away}</TableCell>
+          <TableCell>{capitalizeFirstLetter(home)}</TableCell>
+          <TableCell align='center'>{capitalizeFirstLetter(away)}</TableCell>
           <TableCell align='center'>{date}</TableCell>
           <TableCell align='center'>
             <GetOdds fixtureId={fixId} />
