@@ -1,5 +1,6 @@
 import { Box, Text, Layer, NameValueList, NameValuePair } from "grommet";
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
+import { GlobalState } from "../globalState";
 import { BOX, COLORS } from "../theme";
 import { Fixture } from "../types";
 import PlaceBet from "./transactionComponents/PlaceBet";
@@ -13,6 +14,7 @@ interface PlaceBetModalProps {
 
 const PlaceBetModal: FC<PlaceBetModalProps> = (props) => {
   const { show, setShow, fixture, refreshBets } = props;
+  const { txBeingSent } = useContext(GlobalState);
   const { fixId, home, away, date } = fixture;
 
   function fixtureDetails() {
@@ -38,7 +40,9 @@ const PlaceBetModal: FC<PlaceBetModalProps> = (props) => {
       {show && (
         <Layer
           onEsc={() => setShow(false)}
-          onClickOutside={() => setShow(false)}
+          onClickOutside={() => {
+            !txBeingSent && setShow(false);
+          }}
           style={modalStyling}
           position='top'
           margin='none'

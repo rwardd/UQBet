@@ -13,7 +13,7 @@ interface SetInvalidatedProps {
 const SetInvalidated: FC<SetInvalidatedProps> = (props) => {
   const { fixtureID, setShow, refreshFixtureData } = props;
 
-  const { setTransactionError, bettingContract, setTxBeingSet } =
+  const { setTransactionError, bettingContract, setTxBeingSet, txBeingSent } =
     useContext(GlobalState);
 
   const _setInvalidated = async (fixtureID: BigNumber) => {
@@ -50,6 +50,7 @@ const SetInvalidated: FC<SetInvalidatedProps> = (props) => {
     <>
       <Button
         primary
+        disabled={txBeingSent}
         label='Set Invalidated'
         onClick={() => _setInvalidated(fixtureID)}
         margin='xsmall'

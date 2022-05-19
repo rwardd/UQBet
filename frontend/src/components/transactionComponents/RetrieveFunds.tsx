@@ -42,7 +42,7 @@ const RetrieveFunds: FC<RetrieveFundsProps> = (props) => {
         return;
       }
 
-      console.error("Caught error setting fixutre as invalidated ", error);
+      console.error("Caught error trying to retrieve funds ", error);
       setTransactionError(error);
     } finally {
       setTxBeingSet(undefined);
