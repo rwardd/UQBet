@@ -155,7 +155,7 @@ export const GetPotentialEarnings: FC<GetPotentialEarningsProps> = (props) => {
 
     return (
       <Text color={color} weight='bold'>{`${sign}${earnings.toFixed(
-        1
+        2
       )} ETH`}</Text>
     );
   }

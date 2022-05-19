@@ -33,7 +33,7 @@ const InactiveBets: FC<InactiveBetsProps> = (props) => {
   }
 
   function getPayOut(won: boolean, invalidated: boolean, payOut: BigNumber) {
-    const formattedPayOut = Number(ethers.utils.formatEther(payOut)).toFixed(1);
+    const formattedPayOut = Number(ethers.utils.formatEther(payOut)).toFixed(2);
 
     if (won && !invalidated) {
       return (
@@ -63,7 +63,9 @@ const InactiveBets: FC<InactiveBetsProps> = (props) => {
       const { betId, team, amount, invalidated, payOut } = bet;
 
       const won = !invalidated && payOut.gt(0) ? true : false;
-      const formattedAmount = ethers.utils.formatEther(amount);
+      const formattedAmount = Number(ethers.utils.formatEther(amount)).toFixed(
+        2
+      );
 
       return (
         <TableRow key={betId.toString()}>
