@@ -1,8 +1,9 @@
 # UQBet
 
 This repository contains UQBet, a betting website running on the Ethereum network.
+The application is currently deployed [here](https://rwardd.github.io/).
 
-Currently Deployed [here](https://rwardd.github.io/)
+![Alt text](frontend/public/demo.png?raw=true "Image of the application")
 
 This project is intended to be used with the
 [Hardhat Beginners Tutorial](https://hardhat.org/tutorial), but you should be
