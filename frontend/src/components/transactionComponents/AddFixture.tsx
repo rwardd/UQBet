@@ -88,7 +88,7 @@ const AddFixture: FC = () => {
   }
 
   function isFormEmpty(): boolean {
-    if (date.length === 0 || awayTeam.length === 0 || homeTeam.length === 0) {
+    if (date?.length === 0 || awayTeam.length === 0 || homeTeam.length === 0) {
       return true;
     }
 
@@ -123,7 +123,12 @@ const AddFixture: FC = () => {
             format='dd/mm/yyyy'
             value={date}
             onChange={({ value }) =>
-              setDate(new Date(value.toString()).toLocaleDateString())
+              value?.toString() &&
+              setDate(
+                new Date(value.toString()).toLocaleDateString("en-US", {
+                  timeZone: "Australia/Brisbane",
+                })
+              )
             }
           />
         </FormField>
