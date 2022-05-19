@@ -55,7 +55,7 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
       const { fixId, home, away, date } = fixture;
       return (
         <TableRow key={fixId.toString()}>
-          <TableCell>{capitalizeFirstLetter(home)}</TableCell>
+          <TableCell align='center'>{capitalizeFirstLetter(home)}</TableCell>
           <TableCell align='center'>{capitalizeFirstLetter(away)}</TableCell>
           <TableCell align='center'>{date}</TableCell>
           <TableCell align='center'>
@@ -91,10 +91,13 @@ const GetFixtures: FC<GetFixturesProps> = (props) => {
     }
 
     const tableCells = columns.map((columnTitle) => {
-      const align = columnTitle === columns[0] ? "left" : "center";
-
       return (
-        <TableCell scope='col' border='bottom' key={columnTitle} align={align}>
+        <TableCell
+          scope='col'
+          border='bottom'
+          key={columnTitle}
+          align={"center"}
+        >
           {columnTitle}
         </TableCell>
       );

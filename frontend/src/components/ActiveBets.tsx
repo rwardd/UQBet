@@ -31,7 +31,7 @@ const ActiveBets: FC<ActiveBetsProps> = (props) => {
 
       return (
         <TableRow key={betId.toString()}>
-          <TableCell>{capitalizeFirstLetter(team)}</TableCell>
+          <TableCell align='center'>{capitalizeFirstLetter(team)}</TableCell>
           <TableCell align='center'>{formattedAmount}</TableCell>
           <TableCell align='center'>
             <GetPotentialEarnings bet={bet} />
@@ -50,10 +50,13 @@ const ActiveBets: FC<ActiveBetsProps> = (props) => {
     let columns = ["Team", "Amount", "Potential Earnings", "Result"];
 
     const tableCells = columns.map((columnTitle) => {
-      const align = columnTitle === columns[0] ? "left" : "center";
-
       return (
-        <TableCell scope='col' border='bottom' key={columnTitle} align={align}>
+        <TableCell
+          scope='col'
+          border='bottom'
+          key={columnTitle}
+          align={"center"}
+        >
           {columnTitle}
         </TableCell>
       );

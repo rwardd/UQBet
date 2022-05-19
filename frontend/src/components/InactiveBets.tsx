@@ -69,7 +69,7 @@ const InactiveBets: FC<InactiveBetsProps> = (props) => {
 
       return (
         <TableRow key={betId.toString()}>
-          <TableCell>{capitalizeFirstLetter(team)}</TableCell>
+          <TableCell align='center'>{capitalizeFirstLetter(team)}</TableCell>
           <TableCell style={{ alignItems: "center" }}>
             {betStatus(won, invalidated)}
           </TableCell>
@@ -88,10 +88,13 @@ const InactiveBets: FC<InactiveBetsProps> = (props) => {
     let columns = ["Team", "Result", "Amount", "Payout"];
 
     const tableCells = columns.map((columnTitle) => {
-      const align = columnTitle === columns[0] ? "left" : "center";
-
       return (
-        <TableCell scope='col' border='bottom' key={columnTitle} align={align}>
+        <TableCell
+          scope='col'
+          border='bottom'
+          key={columnTitle}
+          align={"center"}
+        >
           {columnTitle}
         </TableCell>
       );
