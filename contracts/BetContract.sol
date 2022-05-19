@@ -65,12 +65,7 @@ contract BetContract {
         string memory _home,
         string memory _away,
         string memory _date
-    ) public {
-        require(
-            msg.sender == owner,
-            "Only UQ Sports Administration can add Fixtures"
-        );
-        
+    ) public onlyOwner {        
         require(
             checkFixtureInput(_home, _away, _date) == true,
             "Duplicate Fixture"
@@ -89,7 +84,18 @@ contract BetContract {
         fixtures[fixtureCounter - 1] = newFixture;
     }
 
-    function checkFixtureInput(string memory _home, string memory _away, string memory _date) private view returns (bool){
+    /**
+     * Validates the input of a fixture ensuring duplicate fixtures cannot be created
+     * 
+     * @param _home the home team
+     * @param _away the away team
+     * @param _date the date of the match
+     */
+    function checkFixtureInput(
+        string memory _home, 
+        string memory _away, 
+        string memory _date
+    ) private view returns (bool){
         string memory newFixture = string(abi.encodePacked(_home, _away, _date));
         bool valid = true;
         for (uint256 i = 0; i < fixtureIdList.length; i++) {
@@ -104,12 +110,15 @@ contract BetContract {
         return valid;
     }
 
+    /**
+     * Returns the list of Fixture unique identifiers
+     */
     function getFixtures() public view returns (uint256[] memory) {
         return fixtureIdList;
     }
 
     /**
-     * Read only function to retrieve a fixture.
+     * Read only function to retrieve a single fixture.
      */
     function getFixture(uint256 fixtureId)
         public
@@ -119,24 +128,40 @@ contract BetContract {
         return fixtures[fixtureId];
     }
 
+    /**
+     * Read only function that retreives the current number of bets
+     */
     function getFixtureCount() public view returns (uint256) {
         return fixtureCounter;
     }
 
+    /**
+     * Read only function that retreives a single bet
+     */
     function getBet(uint256 betID) public view returns (Bet memory) {
         return allBets[betID];
     }
 
+    /**
+     * Read only function that retreives the current number of bets
+     */
     function getBetCounter() public view returns (uint256) {
         return betCounter;
     }
 
+    /**
+     * Read only function that retreives a users list of bets
+     */
     function getUserBets() public view returns (uint256[] memory) {
         return userBets[msg.sender];
     }
 
     /**
-     * A function to place bets on a particular sport.
+     * A function to allow users to place bets on a particular fixture
+     *
+     * @param fixtureID the fixtures unique identifier
+     * @param team the team to win the fixture
+     * @param amount the amount to wager on the fixture 
      */
     function placeBet(
         uint256 fixtureID,
@@ -176,6 +201,13 @@ contract BetContract {
         betCounter++;
     }
 
+    /**
+     * Used to check for valid input when placing a bet, ensures uses cannot place
+     * a bet on expired or non-existent fixtures
+     *
+     * @param fixtureID the fixtures unique identifier
+     * @param team the team to win the fixture
+     */
     function checkBetInput(
         uint256 fixtureID, 
         string memory team
@@ -191,6 +223,11 @@ contract BetContract {
         return valid;
     }
 
+    /**
+     * Allows users to retreive funds after completion ot invalidation of a fixture
+     *
+     * @param betId the unique identifier of the bet placed
+     */
     function retrieveFunds(uint256 betId) public payable {
         require(!locked, "Re-entrancy detected");
         require(
@@ -201,7 +238,9 @@ contract BetContract {
             allBets[betId].payedOut == false,
             "Bet has already been payed out"
         );
-        require(allBets[betId].payOut >= 0, "This bet has not been won");
+        require(allBets[betId].payOut >= 0, 
+            "This bet has not been won"
+        );
         require(
             allBets[betId].punter == msg.sender,
             "Not the owner of this bet"
@@ -214,6 +253,11 @@ contract BetContract {
         locked = false;
     }
 
+    /**
+     * Calculates the totals bet by both the winning and losing side of a fixture
+     *
+     * @param fixtureId the fixtures unique identifier
+     */
     function getBettingTotals(uint256 fixtureId) public view returns (BettingTotals memory) {
         uint256 home = 0;
         uint256 away = 0;
@@ -239,11 +283,13 @@ contract BetContract {
         return totals;
     }
 
-    function setWinner(uint256 fixtureId, string memory winner) public {
-        require(
-            msg.sender == owner,
-            "Only UQ Sports Administration can set the winner"
-        );
+    /**
+     * Allows the contract owner to set the winner of the fixture
+     *
+     * @param fixtureId the fixtures unique identifier
+     * @param winner the winner of the fixture
+     */
+    function setWinner(uint256 fixtureId, string memory winner) public onlyOwner {
         require(fixtures[fixtureId].active == true, 
         "Fixture is inactive");
 
@@ -280,12 +326,12 @@ contract BetContract {
         }
     }
 
-    function setInvalidated(uint256 fixtureId) public {
-        require(
-            msg.sender == owner,
-            "Only UQ Sports Administration can set the winner"
-        );
-
+    /**
+     * Allows the contract owner to invalidate a fixture due to cancellation or draw
+     *
+     * @param fixtureId the unique identifier of the fixture to be invalidated
+     */
+    function setInvalidated(uint256 fixtureId) public onlyOwner {
         fixtures[fixtureId].invalidated = true;
         fixtures[fixtureId].active = false;
         for (uint256 i = 0; i < fixtures[fixtureId].bets.length; i++) {
@@ -294,6 +340,9 @@ contract BetContract {
         }
     }
 
+    /**
+     * Allows the contract owner to take their cut of the winnings 
+     */
     function takeEarnings() public onlyOwner {
         require(!locked, "Re-entrancy detected");
         uint256 amount = address(this).balance;
@@ -323,6 +372,9 @@ contract BetContract {
         locked = false;
     }
 
+    /**
+     * Modifier to restrict ineraction to contract owner
+     */
     modifier onlyOwner() {
         require(msg.sender == owner, "Only UQ admin can call this function");
         _;

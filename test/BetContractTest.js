@@ -1,6 +1,3 @@
-// This is an example test file. Hardhat will run every *.js file in `test/`,
-// so feel free to add new ones.
-
 const { expect } = require("chai");
 const { BigNumber } = require("ethers");
 const { ethers, waffle, hardhatArguments } = require("hardhat")
@@ -83,7 +80,7 @@ describe("BetContract contract", function () {
 
         it("Should not be able to create a Fixture as a non-owner", async function() {
             await expect(betContract.connect(addr1).addFixture("Red Sox","White Sox", "14 May 22"))
-                .to.be.revertedWith("Only UQ Sports Administration can add Fixtures");
+                .to.be.revertedWith("Only UQ admin can call this function");
         });
 
         it("Should not be able to create duplicate Fixtures", async function() {
@@ -139,7 +136,7 @@ describe("BetContract contract", function () {
 
         it("Should not be able to set winners as non-owner", async function() {
             await betContract.addFixture("Red Sox","White Sox", "14 May 22");
-            await expect(betContract.connect(addr1).setWinner(0, "Red Sox")).to.be.revertedWith("Only UQ Sports Administration can set the winner");
+            await expect(betContract.connect(addr1).setWinner(0, "Red Sox")).to.be.revertedWith("Only UQ admin can call this function");
         });
 
         it("Owner should be able to set winner of valid game, bets should reflect won", async function() {
@@ -168,34 +165,28 @@ describe("BetContract contract", function () {
             await betContract.addFixture("Red Sox","White Sox", "14 May 22");
             await betContract.addFixture("Angels","Dodgers", "15 May 22");
             await betContract.connect(addr5).placeBet(1, "Angels", 1000000000000000000n, {value: 1000000000000000000n});
-            console.log("Before Bet: ", await prov.getBalance(betContract.address));
             await betContract.connect(addr1).placeBet(0, "Red Sox", 50, {value: 50});
             await betContract.connect(addr2).placeBet(0, "Red Sox", 100, {value: 100});
             await betContract.connect(addr3).placeBet(0, "White Sox", 500, {value: 500});
             await betContract.connect(addr4).placeBet(0, "White Sox", 500, {value: 500});
-            console.log("After Bet: ", await prov.getBalance(betContract.address));
             await betContract.setWinner(0, "Red Sox");
             await betContract.connect(addr1).retrieveFunds(1);
             await betContract.connect(addr2).retrieveFunds(2);
-            console.log("After Payout: ", await prov.getBalance(betContract.address));
         });
 
         it("Should allow users to withdraw bet on invalid match", async function() {
             await betContract.addFixture("Red Sox","White Sox", "14 May 22");
             await betContract.addFixture("Angels","Dodgers", "15 May 22");
             await betContract.connect(addr5).placeBet(1, "Angels", 1000000000000000000n, {value: 1000000000000000000n});
-            console.log("Before Bet: ", await prov.getBalance(betContract.address));
             await betContract.connect(addr1).placeBet(0, "Red Sox", 50, {value: 50});
             await betContract.connect(addr2).placeBet(0, "Red Sox", 100, {value: 100});
             await betContract.connect(addr3).placeBet(0, "White Sox", 500, {value: 500});
             await betContract.connect(addr4).placeBet(0, "White Sox", 500, {value: 500});
-            console.log("After Bet: ", await prov.getBalance(betContract.address));
             await betContract.setInvalidated(0);
             await betContract.connect(addr1).retrieveFunds(1);
             await betContract.connect(addr2).retrieveFunds(2);
             await betContract.connect(addr3).retrieveFunds(3);
             await betContract.connect(addr4).retrieveFunds(4);
-            console.log("After Payout: ", await prov.getBalance(betContract.address));
         });
     });
 });
