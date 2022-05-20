@@ -20,7 +20,7 @@ import { Web3Provider } from "@ethersproject/providers";
 // If you are using MetaMask, be sure to change the Network id to 1337.
 // Here's a list of network ids https://docs.metamask.io/guide/ethereum-provider.html#properties
 // to use when deploying to other networks.
-export const HARDHAT_NETWORK_ID = "1337";
+export const HARDHAT_NETWORK_ID = "3";
 
 const UQBet: FC = () => {
   const {
@@ -47,7 +47,7 @@ const UQBet: FC = () => {
       return true;
     }
 
-    setNetworkError("Please connect Metamask to Localhost:8545");
+    setNetworkError("Please connect Metamask to Ropsten");
 
     return false;
   }
@@ -180,7 +180,7 @@ const UQBet: FC = () => {
   if (selectedAddress === _contractOwner) {
     return (
       <>
-        <Navigate to='/admin' />
+        <Navigate to="/admin" />
       </>
     );
   }
