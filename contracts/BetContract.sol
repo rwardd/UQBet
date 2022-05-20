@@ -1,7 +1,5 @@
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
-
 contract BetContract {
     struct Fixture {
         uint256 fixId;
@@ -50,7 +48,7 @@ contract BetContract {
         owner = msg.sender;
         fixtureCounter = 0;
         betCounter = 0;
-        uqSportsCut = 10;
+        uqSportsCut = 95;
         locked = false;
     }
 
@@ -65,12 +63,12 @@ contract BetContract {
         string memory _home,
         string memory _away,
         string memory _date
-    ) public onlyOwner {        
+    ) public onlyOwner {
         require(
             checkFixtureInput(_home, _away, _date) == true,
             "Duplicate Fixture"
         );
-        
+
         Fixture memory newFixture = fixtures[fixtureCounter++];
         newFixture.fixId = (fixtureCounter - 1);
         newFixture.home = _home;
@@ -86,22 +84,33 @@ contract BetContract {
 
     /**
      * Validates the input of a fixture ensuring duplicate fixtures cannot be created
-     * 
+     *
      * @param _home the home team
      * @param _away the away team
      * @param _date the date of the match
      */
     function checkFixtureInput(
-        string memory _home, 
-        string memory _away, 
+        string memory _home,
+        string memory _away,
         string memory _date
-    ) private view returns (bool){
-        string memory newFixture = string(abi.encodePacked(_home, _away, _date));
+    ) private view returns (bool) {
+        string memory newFixture = string(
+            abi.encodePacked(_home, _away, _date)
+        );
         bool valid = true;
         for (uint256 i = 0; i < fixtureIdList.length; i++) {
-            if(fixtures[i].active) {
-                string memory oldFixture = string(abi.encodePacked(fixtures[i].home, fixtures[i].away, fixtures[i].date));
-                if(keccak256(abi.encodePacked(oldFixture)) == keccak256(abi.encodePacked(newFixture))) {
+            if (fixtures[i].active) {
+                string memory oldFixture = string(
+                    abi.encodePacked(
+                        fixtures[i].home,
+                        fixtures[i].away,
+                        fixtures[i].date
+                    )
+                );
+                if (
+                    keccak256(abi.encodePacked(oldFixture)) ==
+                    keccak256(abi.encodePacked(newFixture))
+                ) {
                     valid = false;
                     break;
                 }
@@ -161,7 +170,7 @@ contract BetContract {
      *
      * @param fixtureID the fixtures unique identifier
      * @param team the team to win the fixture
-     * @param amount the amount to wager on the fixture 
+     * @param amount the amount to wager on the fixture
      */
     function placeBet(
         uint256 fixtureID,
@@ -178,8 +187,7 @@ contract BetContract {
             "Amount deposited does not equal message value"
         );
 
-        require(checkBetInput(fixtureID, team) == true, 
-            "Not a valid Bet");
+        require(checkBetInput(fixtureID, team) == true, "Not a valid Bet");
 
         address a = msg.sender;
         Bet memory newBet;
@@ -208,16 +216,21 @@ contract BetContract {
      * @param fixtureID the fixtures unique identifier
      * @param team the team to win the fixture
      */
-    function checkBetInput(
-        uint256 fixtureID, 
-        string memory team
-    ) private view returns (bool){     
+    function checkBetInput(uint256 fixtureID, string memory team)
+        private
+        view
+        returns (bool)
+    {
         bool valid = true;
-        if(!fixtures[fixtureID].active) {
+        if (!fixtures[fixtureID].active) {
             valid = false;
         }
-        if(!(keccak256(abi.encodePacked(team)) == keccak256(abi.encodePacked(fixtures[fixtureID].home))) 
-                && !(keccak256(abi.encodePacked(team)) == keccak256(abi.encodePacked(fixtures[fixtureID].away)))) {
+        if (
+            !(keccak256(abi.encodePacked(team)) ==
+                keccak256(abi.encodePacked(fixtures[fixtureID].home))) &&
+            !(keccak256(abi.encodePacked(team)) ==
+                keccak256(abi.encodePacked(fixtures[fixtureID].away)))
+        ) {
             valid = false;
         }
         return valid;
@@ -238,16 +251,16 @@ contract BetContract {
             allBets[betId].payedOut == false,
             "Bet has already been payed out"
         );
-        require(allBets[betId].payOut >= 0, 
-            "This bet has not been won"
-        );
+        require(allBets[betId].payOut >= 0, "This bet has not been won");
         require(
             allBets[betId].punter == msg.sender,
             "Not the owner of this bet"
         );
 
         locked = true;
-        (bool success, ) = allBets[betId].punter.call{value: uint256(allBets[betId].payOut)}("");
+        (bool success, ) = allBets[betId].punter.call{
+            value: uint256(allBets[betId].payOut)
+        }("");
         require(success, "Failed to withdraw winnings");
         allBets[betId].payedOut = true;
         locked = false;
@@ -258,7 +271,11 @@ contract BetContract {
      *
      * @param fixtureId the fixtures unique identifier
      */
-    function getBettingTotals(uint256 fixtureId) public view returns (BettingTotals memory) {
+    function getBettingTotals(uint256 fixtureId)
+        public
+        view
+        returns (BettingTotals memory)
+    {
         uint256 home = 0;
         uint256 away = 0;
 
@@ -289,9 +306,11 @@ contract BetContract {
      * @param fixtureId the fixtures unique identifier
      * @param winner the winner of the fixture
      */
-    function setWinner(uint256 fixtureId, string memory winner) public onlyOwner {
-        require(fixtures[fixtureId].active == true, 
-        "Fixture is inactive");
+    function setWinner(uint256 fixtureId, string memory winner)
+        public
+        onlyOwner
+    {
+        require(fixtures[fixtureId].active == true, "Fixture is inactive");
 
         // Set winner and inactive
         fixtures[fixtureId].active = false;
@@ -301,7 +320,10 @@ contract BetContract {
         uint256 losersTotal;
         uint256 winnersTotal;
         BettingTotals memory totals = getBettingTotals(fixtureId);
-        if (keccak256(abi.encodePacked(fixtures[fixtureId].home)) == keccak256(abi.encodePacked((winner)))) {
+        if (
+            keccak256(abi.encodePacked(fixtures[fixtureId].home)) ==
+            keccak256(abi.encodePacked((winner)))
+        ) {
             // Home Winner
             losersTotal = (totals.away / 100) * uqSportsCut;
             winnersTotal = totals.home;
@@ -313,14 +335,23 @@ contract BetContract {
 
         // Set bet payouts
         for (uint256 i = 0; i < fixtures[fixtureId].bets.length; i++) {
-            if (keccak256(abi.encodePacked((allBets[fixtures[fixtureId].bets[i]].team))) == keccak256(abi.encodePacked((winner)))) {
+            if (
+                keccak256(
+                    abi.encodePacked(
+                        (allBets[fixtures[fixtureId].bets[i]].team)
+                    )
+                ) == keccak256(abi.encodePacked((winner)))
+            ) {
                 // Winner
                 uint256 amountBet = allBets[fixtures[fixtureId].bets[i]].amount;
-                uint256 payOut = amountBet + ((((amountBet * 100) / winnersTotal) * losersTotal) / 100);
-                allBets[fixtures[fixtureId].bets[i]].payOut = int(payOut);
+                uint256 payOut = amountBet +
+                    ((((amountBet * 100) / winnersTotal) * losersTotal) / 100);
+                allBets[fixtures[fixtureId].bets[i]].payOut = int256(payOut);
             } else {
                 // Loser
-                allBets[fixtures[fixtureId].bets[i]].payOut = - int(allBets[fixtures[fixtureId].bets[i]].amount);
+                allBets[fixtures[fixtureId].bets[i]].payOut = -int256(
+                    allBets[fixtures[fixtureId].bets[i]].amount
+                );
                 allBets[fixtures[fixtureId].bets[i]].payedOut = true;
             }
         }
@@ -335,13 +366,15 @@ contract BetContract {
         fixtures[fixtureId].invalidated = true;
         fixtures[fixtureId].active = false;
         for (uint256 i = 0; i < fixtures[fixtureId].bets.length; i++) {
-            allBets[fixtures[fixtureId].bets[i]].payOut = int256(allBets[fixtures[fixtureId].bets[i]].amount);
+            allBets[fixtures[fixtureId].bets[i]].payOut = int256(
+                allBets[fixtures[fixtureId].bets[i]].amount
+            );
             allBets[fixtures[fixtureId].bets[i]].invalidated = true;
         }
     }
 
     /**
-     * Allows the contract owner to take their cut of the winnings 
+     * Allows the contract owner to take their cut of the winnings
      */
     function takeEarnings() public onlyOwner {
         require(!locked, "Re-entrancy detected");
